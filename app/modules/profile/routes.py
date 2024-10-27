@@ -1,5 +1,6 @@
 from app.modules.auth.services import AuthenticationService
 from app.modules.dataset.models import DataSet
+from app.modules.auth.models import User
 from flask import render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 
@@ -49,6 +50,37 @@ def my_profile():
         'profile/summary.html',
         user_profile=current_user.profile,
         user=current_user,
+        datasets=user_datasets_pagination.items,
+        pagination=user_datasets_pagination,
+        total_datasets=total_datasets_count
+    )
+
+
+@profile_bp.route('/profile/other')
+@login_required
+def other_profile():
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+    user_id = request.args.get('user_id')
+
+    user_datasets_pagination = db.session.query(DataSet) \
+        .filter(DataSet.user_id == user_id) \
+        .order_by(DataSet.created_at.desc()) \
+        .paginate(page=page, per_page=per_page, error_out=False)
+
+    total_datasets_count = db.session.query(DataSet) \
+        .filter(DataSet.user_id == user_id) \
+        .count()
+
+    userother = db.session.query(User) \
+        .filter(User.id == user_id).first()
+
+    print(user_datasets_pagination.items)
+
+    return render_template(
+        'profile/other.html',
+        user_profile=userother.profile,
+        user=userother,
         datasets=user_datasets_pagination.items,
         pagination=user_datasets_pagination,
         total_datasets=total_datasets_count
