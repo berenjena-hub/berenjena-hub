@@ -60,7 +60,8 @@
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-8">
-                                        <i data-feather="file"></i> {{ file.name }}
+                                        <i data-feather="file"></i> 
+                                        <button onclick="viewFile('{{ file.id }}')" style="cursor: pointer; color: inherit;">{{ file.name }}</button>
                                         <br>
                                         <small class="text-muted">({{ file.get_formatted_size() }})</small>
                                     </div>
