@@ -280,7 +280,9 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-@dataset_bp.route("/file_content/<int:file_id>/", methods=["GET"])
-def get_file_content(file_id):
-    return render_template("dataset/file_content.html", file_id=file_id)
+@dataset_bp.route("/file_content/<int:dataset_id>/<int:file_id>/", methods=["GET"])
+def get_file_content(file_id, dataset_id):
+    return render_template("dataset/file_content.html", file_id=file_id, 
+                           dataset=dataset_service.get_or_404(dataset_id))
+
 

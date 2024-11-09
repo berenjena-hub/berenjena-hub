@@ -4,6 +4,74 @@
 
 {% block content %}
 
-<h1 class="h2 mb-3"><b>File content for file ID: {{ file_id }}</b></h1>
+<div class="row">
+    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 style="margin-bottom: 0px; font-size: 1.8rem; font-weight: bold;">
+                        Dataset {{ dataset.ds_meta_data.id }} / File {{ file_id }}
+                    </h4>
+
+                    {% for feature_model in dataset.feature_models %}
+                        {% for file in feature_model.files %}
+                            {% if file.id == file_id %}
+                                <div class="d-flex">
+                                    
+                                    <div class="btn-group me-2" role="group">
+                                        <button id="btnGroupDrop{{ file.id }}" type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 5px;">
+                                            <i data-feather="check"></i> Check
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ file.id }}">
+                                            <li>
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="checkUVL('{{ file.id }}')">Syntax check</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.valid', file_id=file.id) }}">SAT validity check</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+    
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDropExport{{ file.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 5px;">
+                                            <i data-feather="download"></i> Export
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">UVL</a>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">Glencoe</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">DIMACS</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">SPLOT</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% for feature_model in dataset.feature_models %}
+                {% for file in feature_model.files %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i data-feather="file"></i> {{ file.name }}
+                        </div>
+                        <div id="check_{{ file.id }}"></div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div> 
+    </div>
+</div>
+
+
+
 
 {% endblock %}
