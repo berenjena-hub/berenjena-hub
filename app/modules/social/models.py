@@ -16,24 +16,11 @@ class Social(db.Model):
 
 
 class Follow(db.Model):
+    __tablename__ = 'follows'
     id = db.Column(db.Integer, primary_key=True)
     follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     followed_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    __table_args__ = (db.UniqueConstraint('follower_id', 'followed_id', name='_follower_followed_uc'),)
 
-    def follow(self, user):
-        if not self.is_following(user):
-            follow = Follow(follower_id=self.id, followed_id=user.id)
-            db.session.add(follow)
-
-    def unfollow(self, user):
-        follow = self.followed.filter_by(followed_id=user.id).first()
-        if follow:
-            db.session.delete(follow)
-
-    def is_following(self, user):
-        return self.followed.filter_by(followed_id=user.id).count() > 0
-
-    def get_followed_users(self):
-        return [follow.followed_id for follow in self.followed.all()]
+    def __repr__(self):
+        return f'Follow<{self.id}>'
