@@ -1,5 +1,5 @@
 from core.seeders.BaseSeeder import BaseSeeder
-from app.modules.social.models import Social
+from app.modules.social.models import Social, Follow
 from datetime import datetime, timezone
 from app.modules.auth.models import User
 
@@ -14,7 +14,7 @@ class SocialSeeder(BaseSeeder):
         if not user1 or not user2:
             raise Exception("Users not found. Please seed users first.")
 
-        data = [
+        social = [
             Social(
                 text='',
                 comment=False,
@@ -24,4 +24,14 @@ class SocialSeeder(BaseSeeder):
             )
         ]
 
-        self.seed(data)
+        self.seed(social)
+
+        follows = [
+            Follow(
+                follower_id=user1.id,
+                followed_id=user2.id,
+                followed_at=datetime.now(timezone.utc),
+            )
+        ]
+
+        self.seed(follows)
