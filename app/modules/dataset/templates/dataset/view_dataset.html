@@ -64,7 +64,11 @@
                         </span>
                     </div>
                     <div class="col-md-8 col-12">
-                        <a href="{{ url_for('profile.other_profile') }}?user_id={{ dataset.user.profile.user.id }}">{{ dataset.user.profile.surname }}, {{ dataset.user.profile.name }}</a>
+                        {% if current_user.id != dataset.user.profile.user.id %}
+                            <a href="{{ url_for('profile.other_profile') }}?user_id={{ dataset.user.profile.user.id }}">{{ dataset.user.profile.surname }}, {{ dataset.user.profile.name }}</a>
+                        {% else %}
+                            <a href="">{{ dataset.user.profile.surname }}, {{ dataset.user.profile.name }}</a>
+                        {% endif %}
                     </div>
 
                 </div>
