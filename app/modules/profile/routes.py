@@ -1,6 +1,7 @@
 from app.modules.auth.services import AuthenticationService
 from app.modules.dataset.models import DataSet
 from app.modules.auth.models import User
+from app.modules.social.models import Follow
 from flask import render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 
@@ -75,12 +76,18 @@ def other_profile():
     userother = db.session.query(User) \
         .filter(User.id == user_id).first()
 
+    user_following = db.session.query(Follow) \
+        .filter((Follow.follower_id == current_user.id) & (Follow.followed_id == user_id)) \
+        .first()
+
     print(user_datasets_pagination.items)
 
     return render_template(
         'profile/other.html',
         user_profile=userother.profile,
+        current_user=current_user,
         user=userother,
+        user_following=user_following,
         datasets=user_datasets_pagination.items,
         pagination=user_datasets_pagination,
         total_datasets=total_datasets_count
