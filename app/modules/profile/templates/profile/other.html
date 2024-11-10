@@ -23,6 +23,19 @@
                 <p class="card-text h5"><i class="fa fa-envelope"></i> <strong>Email:</strong> {{user.email}}</p>
                 <p class="card-text h5"><i class="fa fa-database"></i> <strong>Uploaded datasets:</strong> {{ total_datasets }} datasets</p>
             </div>
+            <div class="card-body" style="position: absolute; top: 20%; right: 5%;">
+                <p class="card-text h5"><strong>Do you want to follow?</strong></p>
+                
+                {% if user_following %}
+                    <form action="{{ url_for('social.unfollow', user_id=user.id) }}" method="post" style="display:inline;">
+                        <button type="submit" style="background-color: lightcoral;">Unfollow</button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('social.follow', user_id=user.id) }}" method="post" style="display:inline;">
+                        <button type="submit" style="background-color: lightgreen;">Follow</button>
+                    </form>
+                {% endif %}
+            </div>                                 
             
         </div>
 
