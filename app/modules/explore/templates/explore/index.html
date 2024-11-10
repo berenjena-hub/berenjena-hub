@@ -50,17 +50,14 @@
                                 <label class="form-label" for="query">
                                     Search for datasets by title, description, authors, tags, UVL files...
                                 </label>
-                                <input class="form-control" id="query" name="query" required="" type="text"
-                                       value="" autofocus>
+                                <input class="form-control" id="query" name="query" required="" type="text" value="" autofocus>
                             </div>
                         </div>
-
+                    
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label class="form-label" for="publication_type">Filter by publication
-                                    type</label>
-                                <select class="form-control" id="publication_type" name="publication_type"
-                                        required="">
+                                <label class="form-label" for="publication_type">Filter by publication type</label>
+                                <select class="form-control" id="publication_type" name="publication_type" required="">
                                     <option value="any">Any</option>
                                     <option value="none">None</option>
                                     <option value="annotationcollection">Annotation Collection</option>
@@ -83,10 +80,60 @@
                                     <option value="other">Other</option>
                                 </select>
                             </div>
+                        </div>
+                    
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="authors">Filter by author</label>
+                                <select class="form-control" id="authors" name="authors" required="">
+                                    <option value="any">Any</option>
+                                    <!-- Opciones de autor se agregarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
 
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="files">Filter by files number</label>
+                                <select class="form-control" id="files" name="files" required="">
+                                    <option value="any">Any</option>
+                                    <!-- Opciones de autor se agregarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="size">Filter by total size</label>
+                                <select class="form-control" id="size" name="size" required="">
+                                    <option value="any">Any</option>
+                                    <!-- Opciones de autor se agregarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="title">Filter by title</label>
+                                <select class="form-control" id="title" name="title" required="">
+                                    <option value="any">Any</option>
+                                    <!-- Opciones de autor se agregarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="tag">Filter by tag</label>
+                                <select class="form-control" id="tag" name="tag " required="">
+                                    <option value="any">Any</option>
+                                    <!-- Opciones de autor se agregarán aquí dinámicamente -->
+                                </select>
+                            </div>
                         </div>
 
                     </div>
+                    
 
                     <div class="row">
 
