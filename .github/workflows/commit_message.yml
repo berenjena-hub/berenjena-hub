@@ -26,10 +26,10 @@ jobs:
       - name: Check commit message
         run: |
           message="${{ steps.commit_message.outputs.message }}"
-          pattern="^(feat|fix|style|refactor|test)\([^\)]+\):\s.+\s(#\d+(\s+#\d+)*)$"
+          pattern="^(feat|fix|style|refactor|test)\([^\)]+\):\s.+\s#\d+$"
           if [[ ! "$message" =~ $pattern ]]; then
             echo "Error: El mensaje del commit no sigue el formato esperado"
-            echo "Formato esperado: <tipo>(<WI>): <descripción> #<número issue> o #<número issue 1> y #<número issue 2>"
+            echo "Formato esperado: <tipo>(<WI>): <descripción> #<número issue>"
             echo "Ejemplo válido: feat(Funcionalidad): Nuevos cambios #6 y #8"
             exit 1
           fi
