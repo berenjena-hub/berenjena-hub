@@ -17,9 +17,12 @@ jobs:
         run: |
           message=$(git log --format=%s -n 1)
           echo "Commit message: $message"
-          pattern="^(feat|fix|style|refactor|test)\([^\)]+\):\s.+\s?#\d+$"
-          if [[ ! "$message" =~ $pattern ]]; then
+          pattern="^(feat|fix|style|refactor|test)\(.+\):.+#\d+$"
+          if [[ "$message" =~ $pattern ]]; then
+            echo "Formato correcto"
+          else
             echo "Error: El mensaje del commit no sigue el formato esperado"
+            echo "Mensaje: '$message'"
             echo "Formato esperado: <tipo>(<WI>): <descripción> #<número issue>"
             echo "Ejemplo válido: feat(Funcionalidad): Nuevos cambios #6"
             exit 1
