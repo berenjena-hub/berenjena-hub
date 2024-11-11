@@ -22,10 +22,15 @@ function send_query() {
                 publication_type: document.querySelector('#publication_type').value,
                 sorting: document.querySelector('[name="sorting"]:checked').value,
                 size: document.querySelector('#size').value, 
-                author: document.querySelector('#authors').value 
+                author: document.querySelector('#authors').value, 
+                files: document.querySelector('#files').value
             };
 
             console.log(document.querySelector('#publication_type').value);
+            console.log(document.querySelector('#size').value);
+            console.log(document.querySelector('#files').value);
+            
+
 
             fetch('/explore', {
                 method: 'POST',
@@ -47,7 +52,8 @@ function send_query() {
                 const filteredData = data.filter(dataset => {
                     const size = dataset.total_size_in_bytes;
                     const authorMatches = searchCriteria.author === "any" || dataset.authors.some(author => author.name === searchCriteria.author);
-                    
+                    const files = dataset.files_count;
+
                     let sizeMatches = true;
                     switch (searchCriteria.size) {
                         case 'lessThan1KB':
@@ -72,7 +78,47 @@ function send_query() {
                             break;
                     }
                     
-                    return sizeMatches && authorMatches;
+                    let filesMatches = true;
+                    switch (searchCriteria.files) {
+                        case "any":
+                            filesMatches = true;
+                            break;
+                        case "1file":
+                            filesMatches = files ==1;
+                            break;
+                        case "2files":
+                            filesMatches = files ==2;
+                            break;
+                        case "3files":
+                            filesMatches = files ==3;
+                            break;
+                        case "4files":
+                            filesMatches = files ==4;
+                            break;
+                        case "5files":
+                            filesMatches = files ==5;
+                            break;
+                        case "6files":
+                            filesMatches = files ==6;
+                            break;
+                        case "7files":
+                            filesMatches = files ==7;
+                            break;
+                        case "8files":
+                            filesMatches = files ==8;
+                            break;
+                        case "9files":
+                            filesMatches = files ==9;
+                            break;
+                        case "moreThan10files":
+                            filesMatches = files > 10;
+                            break;
+                        default:
+                            filesMatches = true;
+                            break;
+                    }
+                    
+                    return sizeMatches && authorMatches && filesMatches;
                 });
 
                 // results counter
