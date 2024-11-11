@@ -12,6 +12,9 @@ from core.managers.config_manager import ConfigManager
 from core.managers.error_handler_manager import ErrorHandlerManager
 from core.managers.logging_manager import LoggingManager
 
+from app.modules.dashboard.routes import dashboard_bp
+from app.modules.dashboard.dashboard import create_dashboard
+
 # Load environment variables
 load_dotenv()
 
@@ -22,6 +25,12 @@ migrate = Migrate()
 
 def create_app(config_name='development'):
     app = Flask(__name__)
+
+    # Registra el blueprint para el dashboard
+    app.register_blueprint(dashboard_bp)
+
+    # Crear y añadir la aplicación de Dash al servidor Flask
+    create_dashboard(app)
 
     # Load configuration according to environment
     config_manager = ConfigManager(app)

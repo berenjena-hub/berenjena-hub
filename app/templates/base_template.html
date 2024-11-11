@@ -113,7 +113,13 @@ chico sundermann">
                     <li class="sidebar-header">
                         Options
                     </li>
-
+                    <!-- ------------------------------------------------------------------------ -->
+                    <li class="sidebar-item {{ 'active' if request.endpoint == 'dashboard.index' else '' }}">
+                        <a class="sidebar-link" href="/dashboard/">
+                            <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">Dashboard</span>
+                        </a>                                              
+                    </li>
+                    <!-- ------------------------------------------------------------------------------- -->
                     <li class="sidebar-item {{ 'active' if request.endpoint == 'profile.edit_profile' else '' }}">
                         <a class="sidebar-link" href="{{ url_for('profile.edit_profile') }}">
                             <i class="align-middle" data-feather="user"></i> <span
