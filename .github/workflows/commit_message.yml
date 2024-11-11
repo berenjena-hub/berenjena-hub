@@ -17,7 +17,7 @@ jobs:
         run: |
           message=$(git log --format=%s -n 1)
           echo "Commit message: $message"
-          if [[ $message =~ ^(feat|fix|style|refactor|test)\(\w+\):\s*\w+#\d+ || $message =~ ^Merge ]]; then
+          if [[ $message =~ ^(feat|fix|style|refactor|test)\(\w+\):.*#\d+ || $message =~ ^Merge ]]; then
             echo "Formato correcto"
           else
             echo "Error: El mensaje del commit no sigue el formato esperado"
