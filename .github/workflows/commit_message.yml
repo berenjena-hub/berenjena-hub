@@ -1,31 +1,22 @@
-name: Commit Message Format Checker
+name: Comprobar mensaje del commits
 
 on:
   pull_request:
-    branches:
-      - "*"
   push:
-    branches:
-      - "*"
 
 jobs:
-  check-commit-message:
+  comprobar-mensaje-commit:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get commit message
-        id: commit_message
-        run: |
-          message=$(git log -1 --pretty=%B)
-          echo "Commit message: $message"
-          echo "message=$message" >> $GITHUB_ENV
+        uses: actions/checkout@v3
 
       - name: Check commit message
+        id: commit_message
         run: |
-          message="${{ steps.commit_message.outputs.message }}"
+          message=$(git log --format=%s -n 1)
+          echo "Commit message: $message"
           pattern="^(feat|fix|style|refactor|test)\([^\)]+\):\s.+\s?#\d+$"
           if [[ ! "$message" =~ $pattern ]]; then
             echo "Error: El mensaje del commit no sigue el formato esperado"
