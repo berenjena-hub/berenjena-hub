@@ -2,7 +2,7 @@ import logging
 from app.modules.hubfile.services import HubfileService
 from flask import send_file, jsonify
 from app.modules.flamapy import flamapy_bp
-from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter
+from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter, JSONWriter, AFMWriter
 from flamapy.metamodels.pysat_metamodel.transformations import FmToPysat, DimacsWriter
 import tempfile
 import os
@@ -112,6 +112,36 @@ def to_cnf(file_id):
 
         # Return the file in the response
         return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_cnf.txt')
+    finally:
+        # Clean up the temporary file
+        os.remove(temp_file.name)
+
+
+@flamapy_bp.route('/flamapy/to_json/<int:file_id>', methods=['GET'])
+def to_json(file_id):
+    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+    try:
+        hubfile = HubfileService().get_by_id(file_id)
+        fm = UVLReader(hubfile.get_path()).transform()
+        JSONWriter(temp_file.name, fm).transform()
+
+        # Return the file in the response
+        return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_json.txt')
+    finally:
+        # Clean up the temporary file
+        os.remove(temp_file.name)
+
+
+@flamapy_bp.route('/flamapy/to_afm/<int:file_id>', methods=['GET'])
+def to_afm(file_id):
+    temp_file = tempfile.NamedTemporaryFile(suffix='.afm', delete=False)
+    try:
+        hubfile = HubfileService().get_by_id(file_id)
+        fm = UVLReader(hubfile.get_path()).transform()
+        AFMWriter(temp_file.name, fm).transform()
+
+        # Return the file in the response
+        return send_file(temp_file.name, as_attachment=True, download_name=f'{hubfile.name}_afm.txt')
     finally:
         # Clean up the temporary file
         os.remove(temp_file.name)
