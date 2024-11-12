@@ -1,0 +1,208 @@
+{
+  "access": {
+    "embargo": {
+      "active": false,
+      "reason": null
+    },
+    "files": "restricted",
+    "record": "public",
+    "status": "restricted"
+  },
+  "created": "2024-11-12T20:15:58.781361+00:00",
+  "custom_fields": {
+    "code:programmingLanguage": [
+      {
+        "id": "python",
+        "title": {
+          "en": "Python"
+        }
+      }
+    ]
+  },
+  "deletion_status": {
+    "is_deleted": false,
+    "status": "P"
+  },
+  "files": {
+    "count": 1,
+    "enabled": true,
+    "entries": {
+      "file1.uvl": {
+        "access": {
+          "hidden": false
+        },
+        "checksum": "md5:c80ca2ca9edec3c8b001e42922229d4c",
+        "ext": "uvl",
+        "id": "8be9874b-3ac5-424e-b826-2ce3033ffcea",
+        "key": "file1.uvl",
+        "links": {
+          "content": "https://zenodo.org/api/records/14109910/files/file1.uvl/content",
+          "self": "https://zenodo.org/api/records/14109910/files/file1.uvl"
+        },
+        "metadata": {},
+        "mimetype": "application/octet-stream",
+        "size": 414,
+        "storage_class": "L"
+      }
+    },
+    "order": [],
+    "total_bytes": 414
+  },
+  "id": "14109910",
+  "is_draft": false,
+  "is_published": true,
+  "links": {
+    "access": "https://zenodo.org/api/records/14109910/access",
+    "access_grants": "https://zenodo.org/api/records/14109910/access/grants",
+    "access_links": "https://zenodo.org/api/records/14109910/access/links",
+    "access_request": "https://zenodo.org/api/records/14109910/access/request",
+    "access_users": "https://zenodo.org/api/records/14109910/access/users",
+    "archive": "https://zenodo.org/api/records/14109910/files-archive",
+    "archive_media": "https://zenodo.org/api/records/14109910/media-files-archive",
+    "communities": "https://zenodo.org/api/records/14109910/communities",
+    "communities-suggestions": "https://zenodo.org/api/records/14109910/communities-suggestions",
+    "doi": "https://doi.org/10.5281/zenodo.14109910",
+    "draft": "https://zenodo.org/api/records/14109910/draft",
+    "files": "https://zenodo.org/api/records/14109910/files",
+    "latest": "https://zenodo.org/api/records/14109910/versions/latest",
+    "latest_html": "https://zenodo.org/records/14109910/latest",
+    "media_files": "https://zenodo.org/api/records/14109910/media-files",
+    "parent": "https://zenodo.org/api/records/14109909",
+    "parent_doi": "https://doi.org/10.5281/zenodo.14109909",
+    "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.14109909",
+    "parent_html": "https://zenodo.org/records/14109909",
+    "requests": "https://zenodo.org/api/records/14109910/requests",
+    "reserve_doi": "https://zenodo.org/api/records/14109910/draft/pids/doi",
+    "self": "https://zenodo.org/api/records/14109910",
+    "self_doi": "https://doi.org/10.5281/zenodo.14109910",
+    "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.14109910",
+    "self_html": "https://zenodo.org/records/14109910",
+    "self_iiif_manifest": "https://zenodo.org/api/iiif/record:14109910/manifest",
+    "self_iiif_sequence": "https://zenodo.org/api/iiif/record:14109910/sequence/default",
+    "versions": "https://zenodo.org/api/records/14109910/versions"
+  },
+  "media_files": {
+    "count": 0,
+    "enabled": false,
+    "entries": {},
+    "order": [],
+    "total_bytes": 0
+  },
+  "metadata": {
+    "creators": [
+      {
+        "person_or_org": {
+          "family_name": "sheche1",
+          "name": "sheche1",
+          "type": "personal"
+        }
+      }
+    ],
+    "dates": [
+      {
+        "date": "2024-11-12",
+        "type": {
+          "id": "accepted",
+          "title": {
+            "de": "Angenommen",
+            "en": "Accepted"
+          }
+        }
+      }
+    ],
+    "description": "<p>------------ this is a test -----------------</p>",
+    "languages": [
+      {
+        "id": "spa",
+        "title": {
+          "en": "Spanish"
+        }
+      }
+    ],
+    "publication_date": "2024-11-12",
+    "publisher": "Zenodo",
+    "resource_type": {
+      "id": "dataset",
+      "title": {
+        "de": "Datensatz",
+        "en": "Dataset"
+      }
+    },
+    "rights": [
+      {
+        "description": {
+          "en": "The Creative Commons Attribution license allows re-distribution and re-use of a licensed work on the condition that the creator is appropriately credited."
+        },
+        "icon": "cc-by-icon",
+        "id": "cc-by-4.0",
+        "props": {
+          "scheme": "spdx",
+          "url": "https://creativecommons.org/licenses/by/4.0/legalcode"
+        },
+        "title": {
+          "en": "Creative Commons Attribution 4.0 International"
+        }
+      }
+    ],
+    "title": "Testing"
+  },
+  "parent": {
+    "access": {
+      "grants": [],
+      "links": [],
+      "owned_by": {
+        "user": "1218880"
+      },
+      "settings": {
+        "accept_conditions_text": null,
+        "allow_guest_requests": false,
+        "allow_user_requests": false,
+        "secret_link_expiration": 0
+      }
+    },
+    "communities": {},
+    "id": "14109909",
+    "pids": {
+      "doi": {
+        "client": "datacite",
+        "identifier": "10.5281/zenodo.14109909",
+        "provider": "datacite"
+      }
+    }
+  },
+  "pids": {
+    "doi": {
+      "client": "datacite",
+      "identifier": "10.5281/zenodo.14109910",
+      "provider": "datacite"
+    },
+    "oai": {
+      "identifier": "oai:zenodo.org:14109910",
+      "provider": "oai"
+    }
+  },
+  "revision_id": 4,
+  "stats": {
+    "all_versions": {
+      "data_volume": 0.0,
+      "downloads": 0,
+      "unique_downloads": 0,
+      "unique_views": 0,
+      "views": 0
+    },
+    "this_version": {
+      "data_volume": 0.0,
+      "downloads": 0,
+      "unique_downloads": 0,
+      "unique_views": 0,
+      "views": 0
+    }
+  },
+  "status": "published",
+  "updated": "2024-11-12T20:15:58.935305+00:00",
+  "versions": {
+    "index": 1,
+    "is_latest": true,
+    "is_latest_draft": true
+  }
+}
