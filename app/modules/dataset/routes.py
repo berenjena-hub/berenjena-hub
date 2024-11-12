@@ -30,9 +30,13 @@ from app.modules.dataset.services import (
     DSMetaDataService,
     DSViewRecordService,
     DataSetService,
-    DOIMappingService
+    DOIMappingService, 
+    RatingService
 )
 from app.modules.zenodo.services import ZenodoService
+
+from sqlalchemy.orm import Session
+from app import db 
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +47,8 @@ dsmetadata_service = DSMetaDataService()
 zenodo_service = ZenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
+#AÑADIDO
+rating_service = RatingService()
 
 
 @dataset_bp.route("/dataset/upload", methods=["GET", "POST"])
@@ -278,3 +284,52 @@ def get_unsynchronized_dataset(dataset_id):
         abort(404)
 
     return render_template("dataset/view_dataset.html", dataset=dataset)
+
+#AÑADIDO
+@dataset_bp.route("/ratings/<int:dataset_id>", methods=["GET"])
+def get_ratings(dataset_id):
+    try:
+        avg_ratings = rating_service.get_average_rating(dataset_id)
+
+        if not avg_ratings:
+            return jsonify({"message": "No ratings found for this dataset"}), 404
+        
+        return jsonify(avg_ratings), 200
+    except Exception as e:
+        logger.exception("Error al obtener las calificaciones del dataset")
+        return jsonify({"error": str(e)}), 400
+
+@dataset_bp.route("/rate", methods=["POST"])
+@login_required
+def rate():
+    user_id = request.json.get("user_id")
+    dataset_id = request.json.get("dataset_id")
+    quality = request.json.get("quality")
+    size = request.json.get("size")
+    usability = request.json.get("usability")
+
+    if not all([user_id, dataset_id, quality, size, usability]):
+        return jsonify({"message": "Faltan parámetros en la solicitud"}), 400
+
+    try:
+        rating = rating_service.add_rating(user_id, dataset_id, quality, size, usability)
+
+        db.session.commit() 
+
+        return jsonify({"message": "Rating added successfully", "rating": rating}), 200
+    except Exception as e:
+        db.session.rollback()  
+        logger.exception("Error al agregar la calificación")
+        return jsonify({"error": str(e)}), 400
+
+@dataset_bp.route("/doi/<doi>", methods=["GET"])
+def view_dataset(doi):
+    dataset_id = get_dataset_id(doi)
+    user_id = current_user.id if current_user.is_authenticated else None
+    if not dataset_id or not user_id:
+        abort(404) 
+    return render_template("dataset/view_dataset.html", dataset_id=dataset_id, user_id=user_id)
+
+
+
+
