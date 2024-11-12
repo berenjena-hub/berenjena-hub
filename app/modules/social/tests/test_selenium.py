@@ -27,7 +27,7 @@ def test_follow_unfollow_sequence():
         wait_for_page_to_load(driver)
         time.sleep(2)
 
-        user_id = 65
+        user_id = 93
         driver.get(f"{host}/profile/other?user_id={user_id}")
         wait_for_page_to_load(driver)
         time.sleep(2)
