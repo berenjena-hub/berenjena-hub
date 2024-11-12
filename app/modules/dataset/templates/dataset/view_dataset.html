@@ -161,34 +161,37 @@
                 <p>Overall Rating: <span id="avg-total"></span></p>
 
                 <h3>Rate This Dataset</h3>
-                <input type="hidden" id="user-id" value="{{ user_id }}">
-                <input type="hidden" id="dataset-id" value="{{ dataset_id }}">
+                <form id="rating-form">
+                    <input type="hidden" id="user_id" value="{{ current_user.id }}">
+                    <input type="hidden" id="dataset_id" value="{{ dataset.id }}">
+                    
+                    <label>Quality:
+                        <input type="radio" name="quality" value="1" id="quality-1"> 1
+                        <input type="radio" name="quality" value="2" id="quality-2"> 2
+                        <input type="radio" name="quality" value="3" id="quality-3"> 3
+                        <input type="radio" name="quality" value="4" id="quality-4"> 4
+                        <input type="radio" name="quality" value="5" id="quality-5"> 5
+                    </label>
+                    
+                    <label>Size:
+                        <input type="radio" name="size" value="1" id="size-1"> 1
+                        <input type="radio" name="size" value="2" id="size-2"> 2
+                        <input type="radio" name="size" value="3" id="size-3"> 3
+                        <input type="radio" name="size" value="4" id="size-4"> 4
+                        <input type="radio" name="size" value="5" id="size-5"> 5
+                    </label>
+                    
+                    <label>Usability:
+                        <input type="radio" name="usability" value="1" id="usability-1"> 1
+                        <input type="radio" name="usability" value="2" id="usability-2"> 2
+                        <input type="radio" name="usability" value="3" id="usability-3"> 3
+                        <input type="radio" name="usability" value="4" id="usability-4"> 4
+                        <input type="radio" name="usability" value="5" id="usability-5"> 5
+                    </label>
+                    
+                    <button type="submit">Submit rating</button>
+                </form>
                 
-                <label>Quality:
-                    <input type="radio" name="quality" value="1"> 1
-                    <input type="radio" name="quality" value="2"> 2
-                    <input type="radio" name="quality" value="3"> 3
-                    <input type="radio" name="quality" value="4"> 4
-                    <input type="radio" name="quality" value="5"> 5
-                </label>
-                
-                <label>Size:
-                    <input type="radio" name="size" value="1"> 1
-                    <input type="radio" name="size" value="2"> 2
-                    <input type="radio" name="size" value="3"> 3
-                    <input type="radio" name="size" value="4"> 4
-                    <input type="radio" name="size" value="5"> 5
-                </label>
-                
-                <label>Usability:
-                    <input type="radio" name="usability" value="1"> 1
-                    <input type="radio" name="usability" value="2"> 2
-                    <input type="radio" name="usability" value="3"> 3
-                    <input type="radio" name="usability" value="4"> 4
-                    <input type="radio" name="usability" value="5"> 5
-                </label>
-                
-                <button onclick="submitRating()">Submit rating</button>
 
                 
 
@@ -574,11 +577,11 @@
     }
 
     function getCurrentUserId() {
-        return document.getElementById('user-id').value; 
+        return document.getElementById('user_id').value; 
     }   
 
     function getDatasetId() {
-        return document.getElementById('dataset-id').value; 
+        return document.getElementById('dataset_id').value; 
     }   
 
     function getQualityRating() {
@@ -593,6 +596,18 @@
         return document.querySelector('input[name="usability"]:checked').value;
     }
 
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('rating-form').addEventListener('submit', function(event) {
+            const quality = document.querySelector('input[name="quality"]:checked');
+            const size = document.querySelector('input[name="size"]:checked');
+            const usability = document.querySelector('input[name="usability"]:checked');
+
+            if (!quality || !size || !usability) {
+                alert("Por favor complete todos los campos de la calificación");
+                event.preventDefault();  // Evitar que se envíe el formulario
+            }
+        });
+    });
 
 
 
