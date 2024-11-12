@@ -26,12 +26,11 @@ class SocialSeeder(BaseSeeder):
 
         self.seed(social)
 
-        follows = [
+        follow = [
             Follow(
                 follower_id=user1.id,
                 followed_id=user2.id,
-                followed_at=datetime.now(timezone.utc),
             )
         ]
 
-        self.seed(follows)
+        self.seed(follow)

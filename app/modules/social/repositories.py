@@ -12,12 +12,12 @@ class FollowRepository(BaseRepository):
     def __init__(self):
         super().__init__(Follow)
         
-    def create(self, follower_id, followed_id, followed_at):
-        follow = Follow(follower_id=follower_id, followed_id=followed_id, followed_at=followed_at)
+    def create(self, follower_id, followed_id):
+        follow = Follow(follower_id=follower_id, followed_id=followed_id)
         self.session.add(follow)
         self.session.commit()
         return follow
-    
+
     def delete(self, follower_id, followed_id):
         follow = self.session.query(Follow).filter_by(follower_id=follower_id, followed_id=followed_id).first()
         if follow:
