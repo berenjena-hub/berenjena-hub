@@ -287,17 +287,24 @@ def get_unsynchronized_dataset(dataset_id):
 
 #AÑADIDO
 @dataset_bp.route("/ratings/<int:dataset_id>", methods=["GET"])
+@login_required
 def get_ratings(dataset_id):
     try:
         avg_ratings = rating_service.get_average_rating(dataset_id)
 
         if not avg_ratings:
-            return jsonify({"message": "No ratings found for this dataset"}), 404
+            logger.error(f"No se encontraron calificaciones para el dataset {dataset_id}")
+            return jsonify({"error": "Calificaciones no encontradas"}), 404
         
+        logger.info(f"Calificaciones promedio para el dataset {dataset_id}: {avg_ratings}")
+
         return jsonify(avg_ratings), 200
+    
     except Exception as e:
-        logger.exception("Error al obtener las calificaciones del dataset")
+        logger.exception("Error al obtener las calificaciones promedio")
         return jsonify({"error": str(e)}), 400
+
+
 
 @dataset_bp.route("/rate", methods=["POST"])
 @login_required
@@ -313,14 +320,21 @@ def rate():
 
     try:
         rating = rating_service.add_rating(user_id, dataset_id, quality, size, usability)
+        db.session.commit()
 
-        db.session.commit() 
+        avg_ratings = rating_service.get_average_rating(dataset_id)
 
-        return jsonify({"message": "Rating added successfully", "rating": rating}), 200
+        return jsonify({
+            "message": "Calificación guardada correctamente",
+            "rating": rating,
+            "avg_ratings": avg_ratings
+        }), 200
+
     except Exception as e:
-        db.session.rollback()  
+        db.session.rollback()
         logger.exception("Error al agregar la calificación")
         return jsonify({"error": str(e)}), 400
+
 
 @dataset_bp.route("/doi/<doi>", methods=["GET"])
 def view_dataset(doi):

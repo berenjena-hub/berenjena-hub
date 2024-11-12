@@ -533,12 +533,14 @@
     }
 
     /*AÑADIDO */
-    async function submitRating() {
-        const userId = getCurrentUserId(); 
-        const datasetId = getDatasetId();  
-        const quality = getQualityRating();  
-        const size = getSizeRating(); 
-        const usability = getUsabilityRating(); 
+    async function submitRating(event) {
+        event.preventDefault();
+
+        const userId = getCurrentUserId();
+        const datasetId = getDatasetId();
+        const quality = getQualityRating();
+        const size = getSizeRating();
+        const usability = getUsabilityRating();
 
         if (!userId || !datasetId || !quality || !size || !usability) {
             alert("Por favor, complete todos los campos de la calificación.");
@@ -551,7 +553,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
+                    body: JSON.stringify({
                     user_id: userId,
                     dataset_id: datasetId,
                     quality: quality,
@@ -562,10 +564,12 @@
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.message) {
-                    alert(data.message);
-                } else {
-                    alert("Calificación enviada con éxito.");
+                alert(data.message || "Calificación enviada con éxito.");
+                if (data.avg_ratings) {
+                    document.getElementById('avg-quality').textContent = data.avg_ratings.average_quality || 'N/A';
+                    document.getElementById('avg-size').textContent = data.avg_ratings.average_size || 'N/A';
+                    document.getElementById('avg-usability').textContent = data.avg_ratings.average_usability || 'N/A';
+                    document.getElementById('avg-total').textContent = data.avg_ratings.average_total || 'N/A';
                 }
             } else {
                 throw new Error("Error en la respuesta del servidor");
@@ -576,13 +580,17 @@
         }
     }
 
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('rating-form').addEventListener('submit', submitRating);
+    });
+
     function getCurrentUserId() {
-        return document.getElementById('user_id').value; 
-    }   
+        return document.getElementById('user_id').value;
+    }
 
     function getDatasetId() {
-        return document.getElementById('dataset_id').value; 
-    }   
+        return document.getElementById('dataset_id').value;
+    }
 
     function getQualityRating() {
         return document.querySelector('input[name="quality"]:checked').value;
@@ -596,22 +604,10 @@
         return document.querySelector('input[name="usability"]:checked').value;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('rating-form').addEventListener('submit', function(event) {
-            const quality = document.querySelector('input[name="quality"]:checked');
-            const size = document.querySelector('input[name="size"]:checked');
-            const usability = document.querySelector('input[name="usability"]:checked');
-
-            if (!quality || !size || !usability) {
-                alert("Por favor complete todos los campos de la calificación");
-                event.preventDefault();  // Evitar que se envíe el formulario
-            }
-        });
-    });
 
 
 
-async function loadAverageRatings(datasetId) {
+    async function loadAverageRatings(datasetId) {
     if (!datasetId) {
         console.error("No se proporcionó datasetId.");
         return;
@@ -619,19 +615,31 @@ async function loadAverageRatings(datasetId) {
 
     try {
         const response = await fetch(`/ratings/${datasetId}`);
+        
+        const responseText = await response.text();
+        console.log("Respuesta del servidor:", responseText);
+
         if (!response.ok) {
             throw new Error(`Error al cargar ratings: ${response.status}`);
         }
-        const avgRatings = await response.json();
+
+        let avgRatings;
+        try {
+            avgRatings = JSON.parse(responseText);
+        } catch (e) {
+            throw new Error("La respuesta no es un JSON válido.");
+        }
+
         document.getElementById('avg-quality').textContent = avgRatings.average_quality || 'N/A';
         document.getElementById('avg-size').textContent = avgRatings.average_size || 'N/A';
         document.getElementById('avg-usability').textContent = avgRatings.average_usability || 'N/A';
         document.getElementById('avg-total').textContent = avgRatings.average_total || 'N/A';
     } catch (error) {
         console.error("Error al cargar ratings:", error);
+        alert("Hubo un error al cargar las calificaciones. Intenta nuevamente.");
     }
 }
-document.getElementById('rating-form').addEventListener('submit', submitRating);
+
 
 
 </script>
