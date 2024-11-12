@@ -154,6 +154,42 @@
 
                 </div>
 
+                <h2>Average Ratings</h2>
+                <p>Quality: <span id="avg-quality"></span></p>
+                <p>Size: <span id="avg-size"></span></p>
+                <p>Usability: <span id="avg-usability"></span></p>
+                <p>Overall Rating: <span id="avg-total"></span></p>
+
+                <h3>Rate This Dataset</h3>
+                <input type="hidden" id="user-id" value="{{ user_id }}">
+                <input type="hidden" id="dataset-id" value="{{ dataset_id }}">
+                
+                <label>Quality:
+                    <input type="radio" name="quality" value="1"> 1
+                    <input type="radio" name="quality" value="2"> 2
+                    <input type="radio" name="quality" value="3"> 3
+                    <input type="radio" name="quality" value="4"> 4
+                    <input type="radio" name="quality" value="5"> 5
+                </label>
+                
+                <label>Size:
+                    <input type="radio" name="size" value="1"> 1
+                    <input type="radio" name="size" value="2"> 2
+                    <input type="radio" name="size" value="3"> 3
+                    <input type="radio" name="size" value="4"> 4
+                    <input type="radio" name="size" value="5"> 5
+                </label>
+                
+                <label>Usability:
+                    <input type="radio" name="usability" value="1"> 1
+                    <input type="radio" name="usability" value="2"> 2
+                    <input type="radio" name="usability" value="3"> 3
+                    <input type="radio" name="usability" value="4"> 4
+                    <input type="radio" name="usability" value="5"> 5
+                </label>
+                
+                <button onclick="submitRating()">Submit rating</button>
+
                 
 
             </div>
@@ -492,6 +528,97 @@
             console.error('Failed to copy text: ', err);
         });
     }
+
+    /*AÑADIDO */
+    async function submitRating() {
+        const userId = getCurrentUserId(); 
+        const datasetId = getDatasetId();  
+        const quality = getQualityRating();  
+        const size = getSizeRating(); 
+        const usability = getUsabilityRating(); 
+
+        if (!userId || !datasetId || !quality || !size || !usability) {
+            alert("Por favor, complete todos los campos de la calificación.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/rate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    dataset_id: datasetId,
+                    quality: quality,
+                    size: size,
+                    usability: usability,
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.message) {
+                    alert(data.message);
+                } else {
+                    alert("Calificación enviada con éxito.");
+                }
+            } else {
+                throw new Error("Error en la respuesta del servidor");
+            }
+        } catch (error) {
+            console.error("Error al enviar la calificación:", error);
+            alert("Hubo un error al enviar la calificación. Intenta nuevamente.");
+        }
+    }
+
+    function getCurrentUserId() {
+        return document.getElementById('user-id').value; 
+    }   
+
+    function getDatasetId() {
+        return document.getElementById('dataset-id').value; 
+    }   
+
+    function getQualityRating() {
+        return document.querySelector('input[name="quality"]:checked').value;
+    }
+
+    function getSizeRating() {
+        return document.querySelector('input[name="size"]:checked').value;
+    }
+
+    function getUsabilityRating() {
+        return document.querySelector('input[name="usability"]:checked').value;
+    }
+
+
+
+
+async function loadAverageRatings(datasetId) {
+    if (!datasetId) {
+        console.error("No se proporcionó datasetId.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/ratings/${datasetId}`);
+        if (!response.ok) {
+            throw new Error(`Error al cargar ratings: ${response.status}`);
+        }
+        const avgRatings = await response.json();
+        document.getElementById('avg-quality').textContent = avgRatings.average_quality || 'N/A';
+        document.getElementById('avg-size').textContent = avgRatings.average_size || 'N/A';
+        document.getElementById('avg-usability').textContent = avgRatings.average_usability || 'N/A';
+        document.getElementById('avg-total').textContent = avgRatings.average_total || 'N/A';
+    } catch (error) {
+        console.error("Error al cargar ratings:", error);
+    }
+}
+document.getElementById('rating-form').addEventListener('submit', submitRating);
+
+
 </script>
 
 {% endblock %}
