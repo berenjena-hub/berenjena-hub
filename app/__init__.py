@@ -29,8 +29,6 @@ def create_app(config_name='development'):
     # Registra el blueprint para el dashboard
     app.register_blueprint(dashboard_bp)
 
-    # Crear y añadir la aplicación de Dash al servidor Flask
-    create_dashboard(app)
 
     # Load configuration according to environment
     config_manager = ConfigManager(app)
