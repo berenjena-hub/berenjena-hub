@@ -6,6 +6,8 @@ from sqlalchemy import Enum as SQLAlchemyEnum
 
 from app import db
 
+from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, func
+
 
 class PublicationType(Enum):
     NONE = 'none'
@@ -164,3 +166,15 @@ class DOIMapping(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     dataset_doi_old = db.Column(db.String(120))
     dataset_doi_new = db.Column(db.String(120))
+
+#AÑADIDO
+class Rating(db.Model):
+    __tablename__ = 'ratings'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    dataset_id = Column(Integer, ForeignKey('datasets.id', ondelete='CASCADE'), nullable=False)
+    quality_rating = Column(Integer, nullable=False)
+    size_rating = Column(Integer, nullable=False)
+    usability_rating = Column(Integer, nullable=False)
+    total_rating = Column(Float, nullable=False)
+    created_at = Column(DateTime, default=func.now())
