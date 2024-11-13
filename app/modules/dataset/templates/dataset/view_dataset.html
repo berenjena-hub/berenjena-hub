@@ -581,8 +581,64 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('rating-form').addEventListener('submit', submitRating);
-    });
+    const form = document.getElementById('rating-form');
+    
+    // Asegurarnos de que el formulario existe antes de agregar el event listener
+    if (form) {
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();  // Evitamos que el formulario se envíe de forma tradicional
+            
+            // Recopilamos los valores de las calificaciones
+            const quality = document.querySelector('input[name="quality"]:checked');
+            const size = document.querySelector('input[name="size"]:checked');
+            const usability = document.querySelector('input[name="usability"]:checked');
+            
+            // Verificamos si todos los campos están seleccionados
+            if (!quality || !size || !usability) {
+                alert("Por favor complete todos los campos de la calificación");
+                return;  // Detenemos la ejecución si falta algún campo
+            }
+
+            // Enviamos los datos para ser procesados en el backend
+            const userId = document.getElementById('user_id').value;
+            const datasetId = document.getElementById('dataset_id').value;
+            const ratingData = {
+                user_id: userId,
+                dataset_id: datasetId,
+                quality: quality.value,
+                size: size.value,
+                usability: usability.value
+            };
+
+            // Llamada al backend para enviar las calificaciones
+            try {
+                const response = await fetch('/rate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(ratingData)
+                });
+
+                // Comprobamos si la respuesta fue exitosa
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message || "Calificación enviada con éxito");
+                    // Aquí puedes actualizar los valores de la calificación promedio en el frontend si es necesario
+                    loadAverageRatings(datasetId);
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.error || "Hubo un problema al enviar la calificación.");
+                }
+            } catch (error) {
+                console.error("Error al enviar la calificación:", error);
+                alert("Hubo un error al enviar la calificación. Intenta nuevamente.");
+            }
+        });
+    } else {
+        console.error("Formulario no encontrado");
+    }
+});
 
     function getCurrentUserId() {
         return document.getElementById('user_id').value;

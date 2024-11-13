@@ -306,6 +306,36 @@ def get_ratings(dataset_id):
 
 
 
+# @dataset_bp.route("/rate", methods=["POST"])
+# @login_required
+# def rate():
+#     user_id = request.json.get("user_id")
+#     dataset_id = request.json.get("dataset_id")
+#     quality = request.json.get("quality")
+#     size = request.json.get("size")
+#     usability = request.json.get("usability")
+
+#     if not all([user_id, dataset_id, quality, size, usability]):
+#         return jsonify({"message": "Faltan parámetros en la solicitud"}), 400
+
+#     try:
+#         rating = rating_service.add_rating(user_id, dataset_id, quality, size, usability)
+#         db.session.commit()
+
+#         avg_ratings = rating_service.get_average_rating(dataset_id)
+
+#         return jsonify({
+#             "message": "Calificación guardada correctamente",
+#             "rating": rating,
+#             "avg_ratings": avg_ratings
+#         }), 200
+
+#     except Exception as e:
+#         db.session.rollback()
+#         logger.exception("Error al agregar la calificación")
+#         return jsonify({"error": str(e)}), 400
+
+
 @dataset_bp.route("/rate", methods=["POST"])
 @login_required
 def rate():
@@ -319,6 +349,13 @@ def rate():
         return jsonify({"message": "Faltan parámetros en la solicitud"}), 400
 
     try:
+        quality = float(quality)
+        size = float(size)
+        usability = float(usability)
+
+        if not all(1 <= x <= 5 for x in [quality, size, usability]):
+            return jsonify({"message": "Las calificaciones deben estar entre 1 y 5"}), 400
+        
         rating = rating_service.add_rating(user_id, dataset_id, quality, size, usability)
         db.session.commit()
 
@@ -330,10 +367,13 @@ def rate():
             "avg_ratings": avg_ratings
         }), 200
 
+    except ValueError as e:
+        return jsonify({"error": f"Error de tipo: {str(e)}"}), 400
     except Exception as e:
         db.session.rollback()
         logger.exception("Error al agregar la calificación")
         return jsonify({"error": str(e)}), 400
+
 
 
 @dataset_bp.route("/doi/<doi>", methods=["GET"])

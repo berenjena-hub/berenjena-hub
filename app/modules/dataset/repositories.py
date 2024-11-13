@@ -145,9 +145,9 @@ class DatasetRatingRepository(BaseRepository):
         new_rating = Rating(
             user_id=user_id,
             dataset_id=dataset_id,
-            quality_rating=quality,
-            size_rating=size,
-            usability_rating=usability,
+            quality=quality,
+            size=size,
+            usability=usability,
             total_rating=total,
             created_at=datetime.now(timezone.utc)
         )
@@ -158,9 +158,9 @@ class DatasetRatingRepository(BaseRepository):
 
     def get_average_rating(self, dataset_id: int):
         avg_ratings = self.db_session.query(
-            func.avg(Rating.quality_rating).label("average_quality"),
-            func.avg(Rating.size_rating).label("average_size"),
-            func.avg(Rating.usability_rating).label("average_usability"),
+            func.avg(Rating.quality).label("average_quality"),
+            func.avg(Rating.size).label("average_size"),
+            func.avg(Rating.usability).label("average_usability"),
             func.avg(Rating.total_rating).label("average_total")
         ).filter(Rating.dataset_id == dataset_id).one()
 
