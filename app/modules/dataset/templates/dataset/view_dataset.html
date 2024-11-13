@@ -583,23 +583,19 @@
     document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('rating-form');
     
-    // Asegurarnos de que el formulario existe antes de agregar el event listener
     if (form) {
         form.addEventListener('submit', async function(event) {
-            event.preventDefault();  // Evitamos que el formulario se envíe de forma tradicional
+            event.preventDefault(); 
             
-            // Recopilamos los valores de las calificaciones
             const quality = document.querySelector('input[name="quality"]:checked');
             const size = document.querySelector('input[name="size"]:checked');
             const usability = document.querySelector('input[name="usability"]:checked');
             
-            // Verificamos si todos los campos están seleccionados
             if (!quality || !size || !usability) {
                 alert("Por favor complete todos los campos de la calificación");
-                return;  // Detenemos la ejecución si falta algún campo
+                return; 
             }
 
-            // Enviamos los datos para ser procesados en el backend
             const userId = document.getElementById('user_id').value;
             const datasetId = document.getElementById('dataset_id').value;
             const ratingData = {
@@ -610,7 +606,6 @@
                 usability: usability.value
             };
 
-            // Llamada al backend para enviar las calificaciones
             try {
                 const response = await fetch('/rate', {
                     method: 'POST',
@@ -620,11 +615,9 @@
                     body: JSON.stringify(ratingData)
                 });
 
-                // Comprobamos si la respuesta fue exitosa
                 if (response.ok) {
                     const data = await response.json();
                     alert(data.message || "Calificación enviada con éxito");
-                    // Aquí puedes actualizar los valores de la calificación promedio en el frontend si es necesario
                     loadAverageRatings(datasetId);
                 } else {
                     const errorData = await response.json();

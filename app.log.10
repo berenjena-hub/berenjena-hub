@@ -1,4 +1,4 @@
-2024-11-13 02:40:17,503 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+2024-11-13 02:18:05,222 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
 Traceback (most recent call last):
   File "/home/david/Escritorio/berenjena-hub/venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
     self.dialect.do_execute(
@@ -112,5 +112,5 @@ Traceback (most recent call last):
     raise errorclass(errno, errval)
 sqlalchemy.exc.IntegrityError: (pymysql.err.IntegrityError) (1452, 'Cannot add or update a child row: a foreign key constraint fails (`uvlhubdb`.`ratings`, CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE)')
 [SQL: INSERT INTO ratings (user_id, dataset_id, quality, size, usability, total_rating, created_at) VALUES (%(user_id)s, %(dataset_id)s, %(quality)s, %(size)s, %(usability)s, %(total_rating)s, %(created_at)s)]
-[parameters: {'user_id': '4', 'dataset_id': '1', 'quality': 4.0, 'size': 4.0, 'usability': 3.0, 'total_rating': 3.6666666666666665, 'created_at': datetime.datetime(2024, 11, 13, 1, 40, 17, 502421, tzinfo=datetime.timezone.utc)}]
+[parameters: {'user_id': '4', 'dataset_id': '1', 'quality': 3.0, 'size': 3.0, 'usability': 1.0, 'total_rating': 2.3333333333333335, 'created_at': datetime.datetime(2024, 11, 13, 1, 18, 5, 218681, tzinfo=datetime.timezone.utc)}]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)

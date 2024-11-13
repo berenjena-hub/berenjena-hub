@@ -5,6 +5,8 @@ from typing import Optional
 
 from sqlalchemy import desc, func
 
+from app import db
+
 from app.modules.dataset.models import (
     Author,
     DOIMapping,
@@ -139,6 +141,7 @@ class DOIMappingRepository(BaseRepository):
 class DatasetRatingRepository(BaseRepository):
     def __init__(self):
         super().__init__(Rating)
+        self.db_session = db.session
 
     def add_rating(self, dataset_id: int, user_id: int, quality: int, size: int, usability: int) -> Rating:
         total = (quality + size + usability) / 3.0
