@@ -7,8 +7,10 @@ import uuid
 
 from flask import request
 
+from app import db
+
 from app.modules.auth.services import AuthenticationService
-from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData
+from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData, Rating
 from app.modules.dataset.repositories import (
     AuthorRepository,
     DOIMappingRepository,
@@ -232,7 +234,7 @@ class RatingService(BaseService):
     def __init__(self):
         super().__init__(DatasetRatingRepository())
 
-    def add_rating(self, dataset_id: int, user_id: int, quality: int, size: int, usability: int):
+    def add_rating(self, user_id: int, dataset_id: int, quality: int, size: int, usability: int):
         return self.repository.add_rating(dataset_id=dataset_id, user_id=user_id, quality=quality, size=size, usability=usability)
 
     def get_average_rating(self, dataset_id: int):

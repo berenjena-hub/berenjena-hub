@@ -363,7 +363,7 @@ def rate():
 
         return jsonify({
             "message": "Calificación guardada correctamente",
-            "rating": rating,
+            "rating": rating.quality,
             "avg_ratings": avg_ratings
         }), 200
 
@@ -376,14 +376,21 @@ def rate():
 
 
 
-@dataset_bp.route("/doi/<doi>", methods=["GET"])
+# @dataset_bp.route("/doi/<doi>", methods=["GET"])
+# def view_dataset(doi):
+#     dataset_id = get_dataset_id(doi)
+#     user_id = current_user.id if current_user.is_authenticated else None
+#     if not dataset_id or not user_id:
+#         abort(404) 
+#     return render_template("dataset/view_dataset.html", dataset_id=dataset_id, user_id=user_id)
+
+
+@dataset_bp.route("/doi/<path:doi>", methods=["GET"])
 def view_dataset(doi):
     dataset_id = get_dataset_id(doi)
     user_id = current_user.id if current_user.is_authenticated else None
-    if not dataset_id or not user_id:
-        abort(404) 
+    if not dataset_id:
+        abort(404)
     return render_template("dataset/view_dataset.html", dataset_id=dataset_id, user_id=user_id)
-
-
 
 
