@@ -33,6 +33,9 @@ from app.modules.dataset.services import (
     DOIMappingService
 )
 from app.modules.zenodo.services import ZenodoService
+from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter, JSONWriter, AFMWriter
+from flamapy.metamodels.pysat_metamodel.transformations import FmToPysat, DimacsWriter
+from app.modules.hubfile.services import HubfileService
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +181,8 @@ def delete():
 
 @dataset_bp.route("/dataset/download/<int:dataset_id>", methods=["GET"])
 def download_dataset(dataset_id):
+    format = request.args.get("format")
     dataset = dataset_service.get_or_404(dataset_id)
-
     file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
 
     temp_dir = tempfile.mkdtemp()
@@ -189,8 +192,36 @@ def download_dataset(dataset_id):
         for subdir, dirs, files in os.walk(file_path):
             for file in files:
                 full_path = os.path.join(subdir, file)
-
                 relative_path = os.path.relpath(full_path, file_path)
+                if format != "uvl":
+                    files_id = [file.id for fm in dataset.feature_models for file in fm.files]
+                    for file_id in files_id:
+                        if format == "glencoe":
+                            hubfile = HubfileService().get_or_404(file_id)
+                            temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                            fm = UVLReader(hubfile.get_path()).transform()
+                            GlencoeWriter(temp_file.name, fm).transform()
+                        elif format == "dimacs":
+                            hubfile = HubfileService().get_by_id(file_id)
+                            temp_file = tempfile.NamedTemporaryFile(suffix='.cnf', delete=False)
+                            fm = UVLReader(hubfile.get_path()).transform()
+                            sat = FmToPysat(fm).transform()
+                            DimacsWriter(temp_file.name, sat).transform()
+                        elif format == "splot":
+                            hubfile = HubfileService().get_by_id(file_id)
+                            temp_file = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
+                            fm = UVLReader(hubfile.get_path()).transform()
+                            SPLOTWriter(temp_file.name, fm).transform()
+                        elif format == "json":
+                            hubfile = HubfileService().get_by_id(file_id)
+                            temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                            fm = UVLReader(hubfile.get_path()).transform()
+                            JSONWriter(temp_file.name, fm).transform()
+                        elif format == "afm":
+                            hubfile = HubfileService().get_by_id(file_id)
+                            temp_file = tempfile.NamedTemporaryFile(suffix='.afm', delete=False)
+                            fm = UVLReader(hubfile.get_path()).transform()
+                            AFMWriter(temp_file.name, fm).transform()
 
                 zipf.write(
                     full_path,
