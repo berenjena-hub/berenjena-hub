@@ -1,11 +1,136 @@
 {% extends "base_template.html" %}
 
-{% block title %}View social{% endblock %}
+{% block title %}Chat{% endblock %}
 
 {% block content %}
+<h1 class="h3 mb-3">Chat Interface</h1>
 
+<div class="row">
+    <!-- Panel de amigos -->
+    <div class="col-12 col-md-4 col-lg-3">
+        <div class="card shadow-sm">
+            <div class="card-header card-dark">
+                <h5 class="card-title mb-0" style="color: white; font-size: 15px;">Chats</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% if friends %}
+                        {% for friend in friends %}
+                            <li class="list-group-item friend-item" data-id="{{ friend.id }}">
+                                {{ friend.profile.name }} {{ friend.profile.surname }}
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="list-group-item">No tienes amigos aún.</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-container" class="col-12 col-md-8 col-lg-9 hidden">
+        <div class="card shadow-sm">
+            <div class="card-header card-dark">
+                <h5 id="chat-title" class="card-title mb-0" style="color: white; font-size: 15px;">
+                    Chat
+                </h5>
+            </div>
+            <div id="chat-messages" class="card-body chat-messages" 
+                 style="height: 400px; overflow-y: auto; background-color: #f9f9f9;">
+                <!-- Los mensajes se cargarán dinámicamente aquí -->
+                <p id="select-message">Por favor, selecciona a un usuario para empezar a chatear.</p>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex">
+                    <input type="text" id="message-input" class="form-control me-2" 
+                           placeholder="Escribe un mensaje..." disabled>
+                    <button id="send-button" type="button" class="btn btn-success" disabled>Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('social.scripts') }}"></script>
+<script>
+    let activeFriendId = null; // Variable para guardar el ID del amigo seleccionado
+
+    // Función para obtener mensajes
+    async function fetchMessages() {
+        if (!activeFriendId) return; // No hace nada si no hay un amigo seleccionado
+
+        const response = await fetch(`/get_messages?friend_id=${activeFriendId}`);
+        const messages = await response.json();
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Limpia el área de mensajes
+        chatMessages.innerHTML = '';
+
+        // Agrega los mensajes obtenidos
+        messages.forEach(msg => {
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+            chatMessages.appendChild(messageElement);
+        });
+
+        // Hace scroll automático al final
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Función para enviar un mensaje
+    async function sendMessage() {
+        const input = document.getElementById('message-input');
+        const text = input.value;
+
+        if (text.trim() && activeFriendId) {
+            await fetch('/send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ followed_id: activeFriendId, text: text }),
+            });
+
+            // Limpia el campo de texto
+            input.value = '';
+
+            // Actualiza los mensajes
+            await fetchMessages();
+        }
+    }
+
+    // Configura el botón de enviar
+    document.getElementById('send-button').addEventListener('click', sendMessage);
+
+    // Seleccionar un amigo del panel izquierdo
+    document.querySelectorAll('.friend-item').forEach(item => {
+        item.addEventListener('click', async (event) => {
+            // Obtener el ID del amigo seleccionado
+            activeFriendId = event.target.getAttribute('data-id');
+
+            // Resaltar el amigo seleccionado
+            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Actualizar el título del chat
+            const friendName = event.target.textContent.trim();
+            document.getElementById('chat-title').textContent = `Chat con ${friendName}`;
+
+            // Mostrar la sección de chat
+            document.getElementById('chat-container').classList.remove('hidden');
+
+            // Habilitar el campo de entrada y el botón
+            document.getElementById('message-input').disabled = false;
+            document.getElementById('send-button').disabled = false;
+
+            // Eliminar el mensaje de selección
+            document.getElementById('select-message').remove();
+
+            // Obtener mensajes para el amigo seleccionado
+            await fetchMessages();
+        });
+    });
+
+    // Actualiza los mensajes automáticamente cada 2 segundos
+    setInterval(fetchMessages, 2000);
+</script>
 {% endblock %}
