@@ -16,12 +16,27 @@ class SocialSeeder(BaseSeeder):
 
         social = [
             Social(
-                text='',
+                text='Hola',
                 comment=False,
                 created_at=datetime.now(timezone.utc),
                 follower=user1.id,
                 followed=user2.id,
+            ),
+            Social(
+                text='¿Cómo estás?',
+                comment=False,
+                created_at=datetime.now(timezone.utc),
+                follower=user1.id,
+                followed=user2.id,
+            ),
+            Social(
+                text='Hola, estoy bien.',
+                comment=False,
+                created_at=datetime.now(timezone.utc),
+                follower=user2.id,
+                followed=user1.id,
             )
+            
         ]
 
         self.seed(social)
@@ -30,6 +45,10 @@ class SocialSeeder(BaseSeeder):
             Follow(
                 follower_id=user1.id,
                 followed_id=user2.id,
+            ),
+            Follow(
+                follower_id=user2.id,
+                followed_id=user1.id,
             )
         ]
 
