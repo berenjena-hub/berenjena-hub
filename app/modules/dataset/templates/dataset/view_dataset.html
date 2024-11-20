@@ -166,30 +166,18 @@
                     <input type="hidden" id="dataset_id" value="{{ dataset.id }}">
                     
                     <label>Quality:
-                        <input type="radio" name="quality" value="1" id="quality-1"> 1
-                        <input type="radio" name="quality" value="2" id="quality-2"> 2
-                        <input type="radio" name="quality" value="3" id="quality-3"> 3
-                        <input type="radio" name="quality" value="4" id="quality-4"> 4
-                        <input type="radio" name="quality" value="5" id="quality-5"> 5
+                        <input id="quality" type="number" />
                     </label>
                     
                     <label>Size:
-                        <input type="radio" name="size" value="1" id="size-1"> 1
-                        <input type="radio" name="size" value="2" id="size-2"> 2
-                        <input type="radio" name="size" value="3" id="size-3"> 3
-                        <input type="radio" name="size" value="4" id="size-4"> 4
-                        <input type="radio" name="size" value="5" id="size-5"> 5
+                        <input id="size" type="number" />
                     </label>
                     
                     <label>Usability:
-                        <input type="radio" name="usability" value="1" id="usability-1"> 1
-                        <input type="radio" name="usability" value="2" id="usability-2"> 2
-                        <input type="radio" name="usability" value="3" id="usability-3"> 3
-                        <input type="radio" name="usability" value="4" id="usability-4"> 4
-                        <input type="radio" name="usability" value="5" id="usability-5"> 5
+                        <input id="usability" type="number" />
                     </label>
                     
-                    <button type="submit">Submit rating</button>
+                    <button id="submit-rating">Submit Rating</button>
                 </form>
                 
 
@@ -533,35 +521,31 @@
     }
 
     /*AÑADIDO */
-    document.addEventListener("DOMContentLoaded", function () {
-        const datasetId = getDatasetId();
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            const datasetId = getDatasetId();
+            if (!datasetId) {
+                console.error("No se pudo obtener el datasetId. Verifica que el elemento existe y tiene un valor válido.");
+                return;
+            }
 
-        fetch(`/ratings/${datasetId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Error al cargar ratings: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.user_rating) {
-                    document.querySelector("#quality").value = data.user_rating.quality || "";
-                    document.querySelector("#size").value = data.user_rating.size || "";
-                    document.querySelector("#usability").value = data.user_rating.usability || "";
-                }
+            await loadAverageRatings(datasetId);
+            await loadUserRating(datasetId);
 
-                if (data.avg_ratings) {
-                    document.querySelector("#avg-quality").textContent = (Number(data.avg_ratings.quality) || 0).toFixed(2);
-                    document.querySelector("#avg-size").textContent = (Number(data.avg_ratings.size) || 0).toFixed(2);
-                    document.querySelector("#avg-usability").textContent = (Number(data.avg_ratings.usability) || 0).toFixed(2);
-                    document.querySelector("#avg-total").textContent = (Number(data.avg_ratings.total) || 0).toFixed(2);
-                }
-            })
-            .catch(err => {
-                console.error("Error al cargar las calificaciones:", err);
-                alert("Hubo un error al cargar las calificaciones. Intenta nuevamente.");
+            const submitButton = document.getElementById("submit-rating");
+            if (!submitButton) {
+                console.error("El botón con id 'submit-rating' no existe.");
+                return;
+            }
+
+            submitButton.addEventListener("click", async function (event) {
+                await submitRating(event);
             });
+        } catch (error) {
+            console.error("Error durante la inicialización:", error);
+        }
     });
+
 
 
     async function submitRating(event) {
@@ -590,17 +574,15 @@
                     quality: quality,
                     size: size,
                     usability: usability,
-                })
+                }),
             });
 
             if (response.ok) {
                 const data = await response.json();
                 alert(data.message || "Calificación enviada con éxito.");
+
                 if (data.avg_ratings) {
-                    document.getElementById('avg-quality').textContent = data.avg_ratings.quality.toFixed(2) || "0.00";
-                    document.getElementById('avg-size').textContent = data.avg_ratings.size.toFixed(2) || "0.00";
-                    document.getElementById('avg-usability').textContent = data.avg_ratings.usability.toFixed(2) || "0.00";
-                    document.getElementById('avg-total').textContent = data.avg_ratings.total.toFixed(2) || "0.00";
+                    updateAverageRatings(data.avg_ratings);
                 }
             } else {
                 throw new Error("Error en la respuesta del servidor");
@@ -611,6 +593,7 @@
         }
     }
 
+
     function getCurrentUserId() {
         return document.getElementById('user_id').value;
     }
@@ -620,50 +603,86 @@
     }
 
     function getQualityRating() {
-        return document.querySelector('input[name="quality"]:checked').value;
+        const qualityInput = document.getElementById('quality');
+        if (!qualityInput || qualityInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de calidad seleccionado.");
+            return null;
+        }
+        return Number(qualityInput.value);
     }
 
     function getSizeRating() {
-        return document.querySelector('input[name="size"]:checked').value;
+        const sizeInput = document.getElementById('size');
+        if (!sizeInput || sizeInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de tamaño seleccionado.");
+            return null;
+        }
+        return Number(sizeInput.value);
     }
 
     function getUsabilityRating() {
-        return document.querySelector('input[name="usability"]:checked').value;
-    }   
+        const usabilityInput = document.getElementById('usability');
+        if (!usabilityInput || usabilityInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de usabilidad seleccionado.");
+            return null;
+        }
+        return Number(usabilityInput.value);
+    }
+ 
 
 
     async function loadAverageRatings(datasetId) {
-    if (!datasetId) {
-        console.error("No se proporcionó datasetId.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/ratings/${datasetId}`);
-        
-        const responseText = await response.text();
-        console.log("Respuesta del servidor:", responseText);
-
-        if (!response.ok) {
-            throw new Error(`Error al cargar ratings: ${response.status}`);
-        }
-
-        let avgRatings;
         try {
-            avgRatings = JSON.parse(responseText);
-        } catch (e) {
-            throw new Error("La respuesta no es un JSON válido.");
-        }
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error loading ratings: ${response.status}`);
 
-        document.getElementById('avg-quality').textContent = avgRatings.average_quality || 'N/A';
-        document.getElementById('avg-size').textContent = avgRatings.average_size || 'N/A';
-        document.getElementById('avg-usability').textContent = avgRatings.average_usability || 'N/A';
-        document.getElementById('avg-total').textContent = avgRatings.average_total || 'N/A';
-    } catch (error) {
-        console.error("Error al cargar ratings:", error);
-        alert("Hubo un error al cargar las calificaciones. Intenta nuevamente.");
+            const data = await response.json();
+            updateAverageRatings(data.avg_ratings);
+        } catch (error) {
+            console.error("Error loading average ratings:", error);
+            alert("Failed to load ratings. Please try again.");
+        }
     }
-}
+
+    async function loadUserRating(datasetId) {
+        try {
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error al cargar user rating: ${response.status}`);
+
+            const data = await response.json();
+            if (data.user_rating) updateUserRating(data.user_rating);
+        } catch (error) {
+            console.error("Error loading user rating:", error);
+        }
+    }
+
+    function updateAverageRatings(avgRatings) {
+        if (!avgRatings) return;
+
+        const quality = Number(avgRatings.quality) || 0;
+        const size = Number(avgRatings.size) || 0;
+        const usability = Number(avgRatings.usability) || 0;
+        const total = Number(avgRatings.total) || 0;
+
+        document.querySelector("#avg-quality").textContent = quality.toFixed(2);
+        document.querySelector("#avg-size").textContent = size.toFixed(2);
+        document.querySelector("#avg-usability").textContent = usability.toFixed(2);
+        document.querySelector("#avg-total").textContent = total.toFixed(2);
+    }
+
+    function updateUserRating(userRating) {
+        if (!userRating) return;
+
+        const qualityElement = document.querySelector("#quality");
+        const sizeElement = document.querySelector("#size");
+        const usabilityElement = document.querySelector("#usability");
+
+        if (qualityElement) qualityElement.value = userRating.quality || "";
+        if (sizeElement) sizeElement.value = userRating.size || "";
+        if (usabilityElement) usabilityElement.value = userRating.usability || "";
+    }
+
+
 
 
 
