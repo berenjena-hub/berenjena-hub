@@ -579,10 +579,14 @@
 
             if (response.ok) {
                 const data = await response.json();
-                alert(data.message || "Calificación enviada con éxito.");
+                if (data.message) {
+                    alert(data.message || "Calificación enviada con éxito.");
+                }
 
                 if (data.avg_ratings) {
                     updateAverageRatings(data.avg_ratings);
+                } else {
+                    console.warn("No se recibieron datos de medias actualizadas del servidor.");
                 }
             } else {
                 throw new Error("Error en la respuesta del servidor");
@@ -595,11 +599,11 @@
 
 
     function getCurrentUserId() {
-        return document.getElementById('user_id').value;
+        return document.getElementById('user_id')?.value || null;
     }
 
     function getDatasetId() {
-        return document.getElementById('dataset_id').value;
+        return document.getElementById('dataset_id')?.value || null;
     }
 
     function getQualityRating() {
@@ -637,7 +641,11 @@
             if (!response.ok) throw new Error(`Error loading ratings: ${response.status}`);
 
             const data = await response.json();
-            updateAverageRatings(data.avg_ratings);
+            if (data.avg_ratings) {
+                updateAverageRatings(data.avg_ratings);
+            } else {
+                console.warn("No se encontraron medias en la respuesta del servidor.");
+            }
         } catch (error) {
             console.error("Error loading average ratings:", error);
             alert("Failed to load ratings. Please try again.");
@@ -657,12 +665,17 @@
     }
 
     function updateAverageRatings(avgRatings) {
-        if (!avgRatings) return;
+        if (!avgRatings || typeof avgRatings !== 'object') {
+            console.warn("No se proporcionaron medias válidas para actualizar.");
+            return;
+        }
 
         const quality = Number(avgRatings.quality) || 0;
         const size = Number(avgRatings.size) || 0;
         const usability = Number(avgRatings.usability) || 0;
         const total = Number(avgRatings.total) || 0;
+
+        console.log("Actualizando medias:", { quality, size, usability, total });
 
         document.querySelector("#avg-quality").textContent = quality.toFixed(2);
         document.querySelector("#avg-size").textContent = size.toFixed(2);
@@ -673,9 +686,9 @@
     function updateUserRating(userRating) {
         if (!userRating) return;
 
-        const qualityElement = document.querySelector("#quality");
-        const sizeElement = document.querySelector("#size");
-        const usabilityElement = document.querySelector("#usability");
+        const qualityElement = document.getElementById('quality');
+        const sizeElement = document.getElementById('size');
+        const usabilityElement = document.getElementById('usability');
 
         if (qualityElement) qualityElement.value = userRating.quality || "";
         if (sizeElement) sizeElement.value = userRating.size || "";

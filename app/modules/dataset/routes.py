@@ -341,6 +341,71 @@ def rate():
         logger.exception("Error al agregar la calificación")
         return jsonify({"error": str(e)}), 400
 
+    # @dataset_bp.route("/rate", methods=["POST"])
+    # @login_required
+    # def rate():
+    #     try:
+    #         user_id = request.json.get("user_id")
+    #         dataset_id = request.json.get("dataset_id")
+    #         quality = request.json.get("quality")
+    #         size = request.json.get("size")
+    #         usability = request.json.get("usability")
+
+    #         if not all([user_id, dataset_id, quality, size, usability]):
+    #             logger.error(f"Solicitud inválida: Faltan parámetros. Datos recibidos: {request.json}")
+    #             return jsonify({"message": "Faltan parámetros en la solicitud"}), 400
+
+    #         try:
+    #             quality = float(quality)
+    #             size = float(size)
+    #             usability = float(usability)
+
+    #             if not all(1 <= x <= 5 for x in [quality, size, usability]):
+    #                 logger.error("Las calificaciones deben estar entre 1 y 5.")
+    #                 return jsonify({"message": "Las calificaciones deben estar entre 1 y 5"}), 400
+    #         except ValueError as e:
+    #             logger.error(f"Error de conversión: {str(e)}")
+    #             return jsonify({"message": "Las calificaciones deben ser números válidos"}), 400
+
+    #         existing_rating = db.session.query(Rating).filter_by(user_id=user_id, dataset_id=dataset_id).first()
+    #         if existing_rating:
+    #             existing_rating.quality = quality
+    #             existing_rating.size = size
+    #             existing_rating.usability = usability
+    #             existing_rating.total_rating = (quality + size + usability) / 3
+    #             logger.info(f"Calificación actualizada para user_id={user_id}, dataset_id={dataset_id}")
+    #         else:
+    #             rating = Rating(
+    #                 user_id=user_id,
+    #                 dataset_id=dataset_id,
+    #                 quality=quality,
+    #                 size=size,
+    #                 usability=usability,
+    #                 total_rating=(quality + size + usability) / 3
+    #             )
+    #             db.session.add(rating)
+    #             logger.info(f"Calificación creada para user_id={user_id}, dataset_id={dataset_id}")
+
+    #         db.session.commit()
+
+    #         avg_ratings = rating_service.get_average_rating(dataset_id)
+
+    #         if not avg_ratings:
+    #             logger.warning(f"No se pudieron calcular las medias para dataset_id={dataset_id}")
+    #             return jsonify({"message": "Error al calcular las medias"}), 500
+
+    #         return jsonify({
+    #             "message": "Calificación guardada correctamente",
+    #             "avg_ratings": avg_ratings
+    #         }), 200
+
+    #     except Exception as e:
+    #         db.session.rollback()
+    #         logger.exception("Error al procesar la solicitud /rate")
+    #         return jsonify({"error": f"Error interno: {str(e)}"}), 500
+
+
+
 
 @dataset_bp.route('/ratings/<int:dataset_id>', methods=['GET'])
 def get_ratings(dataset_id):
