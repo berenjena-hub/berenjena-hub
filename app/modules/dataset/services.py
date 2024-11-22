@@ -234,26 +234,32 @@ class RatingService(BaseService):
     def __init__(self):
         super().__init__(DatasetRatingRepository())
 
+    # def add_rating(self, user_id: int, dataset_id: int, quality: int, size: int, usability: int):
+    #     return self.repository.add_rating(dataset_id=dataset_id, user_id=user_id, quality=quality, size=size, usability=usability)
+
+    # def get_average_rating(self, dataset_id: int):
+    #     try:
+    #         ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+
+    #         if not ratings:
+    #             return None
+
+    #         avg_quality = sum(rating.quality for rating in ratings) / len(ratings)
+    #         avg_size = sum(rating.size for rating in ratings) / len(ratings)
+    #         avg_usability = sum(rating.usability for rating in ratings) / len(ratings)
+
+    #         return {
+    #             "average_quality": avg_quality,
+    #             "average_size": avg_size,
+    #             "average_usability": avg_usability,
+    #             "average_total": (avg_quality + avg_size + avg_usability) / 3,
+    #         }
+    #     except Exception as e:
+    #         logger.exception("Error al obtener calificaciones promedio")
+    #         raise e
+
     def add_rating(self, user_id: int, dataset_id: int, quality: int, size: int, usability: int):
         return self.repository.add_rating(dataset_id=dataset_id, user_id=user_id, quality=quality, size=size, usability=usability)
 
     def get_average_rating(self, dataset_id: int):
-        try:
-            ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
-
-            if not ratings:
-                return None
-
-            avg_quality = sum(rating.quality for rating in ratings) / len(ratings)
-            avg_size = sum(rating.size for rating in ratings) / len(ratings)
-            avg_usability = sum(rating.usability for rating in ratings) / len(ratings)
-
-            return {
-                "average_quality": avg_quality,
-                "average_size": avg_size,
-                "average_usability": avg_usability,
-                "average_total": (avg_quality + avg_size + avg_usability) / 3,
-            }
-        except Exception as e:
-            logger.exception("Error al obtener calificaciones promedio")
-            raise e
+        return self.repository.get_average_rating(dataset_id)

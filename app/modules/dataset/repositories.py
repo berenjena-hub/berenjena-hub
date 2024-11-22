@@ -143,33 +143,91 @@ class DatasetRatingRepository(BaseRepository):
         super().__init__(Rating)
         self.db_session = db.session
 
+    # def add_rating(self, dataset_id: int, user_id: int, quality: int, size: int, usability: int) -> Rating:
+    #     total = (quality + size + usability) / 3.0
+    #     new_rating = Rating(
+    #         user_id=user_id,
+    #         dataset_id=dataset_id,
+    #         quality=quality,
+    #         size=size,
+    #         usability=usability,
+    #         total_rating=total,
+    #         created_at=datetime.now(timezone.utc)
+    #     )
+    #     self.db_session.add(new_rating)
+    #     self.db_session.commit()
+    #     logger.info(f"New rating added for dataset {dataset_id} by user {user_id}")
+    #     return new_rating
+
+    # def get_average_rating(self, dataset_id: int):
+    #     avg_ratings = self.db_session.query(
+    #         func.avg(Rating.quality).label("average_quality"),
+    #         func.avg(Rating.size).label("average_size"),
+    #         func.avg(Rating.usability).label("average_usability"),
+    #         func.avg(Rating.total_rating).label("average_total")
+    #     ).filter(Rating.dataset_id == dataset_id).one()
+
+    #     return {
+    #         "average_quality": avg_ratings.average_quality or 0,
+    #         "average_size": avg_ratings.average_size or 0,
+    #         "average_usability": avg_ratings.average_usability or 0,
+    #         "average_total": avg_ratings.average_total or 0
+    #     }
+
     def add_rating(self, dataset_id: int, user_id: int, quality: int, size: int, usability: int) -> Rating:
         total = (quality + size + usability) / 3.0
-        new_rating = Rating(
-            user_id=user_id,
-            dataset_id=dataset_id,
-            quality=quality,
-            size=size,
-            usability=usability,
-            total_rating=total,
-            created_at=datetime.now(timezone.utc)
-        )
-        self.db_session.add(new_rating)
+        existing_rating = self.db_session.query(Rating).filter_by(dataset_id=dataset_id, user_id=user_id).first()
+
+        if existing_rating:
+            existing_rating.quality = quality
+            existing_rating.size = size
+            existing_rating.usability = usability
+            existing_rating.total_rating = total
+            logger.info(f"Updated rating for dataset {dataset_id} by user {user_id}")
+        else:
+            existing_rating = Rating(
+                user_id=user_id,
+                dataset_id=dataset_id,
+                quality=quality,
+                size=size,
+                usability=usability,
+                total_rating=total,
+                created_at=datetime.now(timezone.utc)
+            )
+            self.db_session.add(existing_rating)
+            logger.info(f"New rating added for dataset {dataset_id} by user {user_id}")
+
         self.db_session.commit()
-        logger.info(f"New rating added for dataset {dataset_id} by user {user_id}")
-        return new_rating
+        return existing_rating
 
     def get_average_rating(self, dataset_id: int):
-        avg_ratings = self.db_session.query(
-            func.avg(Rating.quality).label("average_quality"),
-            func.avg(Rating.size).label("average_size"),
-            func.avg(Rating.usability).label("average_usability"),
-            func.avg(Rating.total_rating).label("average_total")
-        ).filter(Rating.dataset_id == dataset_id).one()
+        try:
+            avg_ratings = self.db_session.query(
+                func.avg(Rating.quality).label("average_quality"),
+                func.avg(Rating.size).label("average_size"),
+                func.avg(Rating.usability).label("average_usability"),
+                func.avg(Rating.total_rating).label("average_total")
+            ).filter(Rating.dataset_id == dataset_id).one_or_none()
 
-        return {
-            "average_quality": avg_ratings.average_quality or 0,
-            "average_size": avg_ratings.average_size or 0,
-            "average_usability": avg_ratings.average_usability or 0,
-            "average_total": avg_ratings.average_total or 0
-        }
+            if not avg_ratings or all(r is None for r in avg_ratings):
+                logger.warning(f"No ratings found for dataset {dataset_id}")
+                return {
+                    "average_quality": 0,
+                    "average_size": 0,
+                    "average_usability": 0,
+                    "average_total": 0,
+                }
+
+            result = {
+                "average_quality": avg_ratings.average_quality or 0,
+                "average_size": avg_ratings.average_size or 0,
+                "average_usability": avg_ratings.average_usability or 0,
+                "average_total": avg_ratings.average_total or 0
+            }
+
+            logger.info(f"Averages for dataset {dataset_id}: {result}")
+            return result
+
+        except Exception as e:
+            logger.exception("Error calculating average ratings")
+            raise e
