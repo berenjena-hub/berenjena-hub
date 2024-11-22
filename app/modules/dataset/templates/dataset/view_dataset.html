@@ -155,10 +155,10 @@
                 </div>
 
                 <h2>Average Ratings</h2>
-                <p>Quality: <span id="avg-quality"></span></p>
-                <p>Size: <span id="avg-size"></span></p>
-                <p>Usability: <span id="avg-usability"></span></p>
-                <p>Overall Rating: <span id="avg-total"></span></p>
+                <p>Quality: <span id="avg-quality">0</span></p>
+                <p>Size: <span id="avg-size">0</span></p>
+                <p>Usability: <span id="avg-usability">0</span></p>
+                <p>Overall Rating: <span id="avg-total">0</span></p>                
 
                 <h3>Rate This Dataset</h3>
                 <form id="rating-form">
@@ -579,9 +579,7 @@
 
             if (response.ok) {
                 const data = await response.json();
-                if (data.message) {
-                    alert(data.message || "Calificación enviada con éxito.");
-                }
+                console.log("Datos recibidos del servidor:", data);
 
                 if (data.avg_ratings) {
                     updateAverageRatings(data.avg_ratings);
@@ -665,22 +663,29 @@
     }
 
     function updateAverageRatings(avgRatings) {
-        if (!avgRatings || typeof avgRatings !== 'object') {
-            console.warn("No se proporcionaron medias válidas para actualizar.");
+        if (!avgRatings) {
+            console.warn("No se proporcionaron datos de promedios para actualizar.");
             return;
         }
 
-        const quality = Number(avgRatings.quality) || 0;
-        const size = Number(avgRatings.size) || 0;
-        const usability = Number(avgRatings.usability) || 0;
-        const total = Number(avgRatings.total) || 0;
+        console.log("Actualizando las medias con:", avgRatings);
 
-        console.log("Actualizando medias:", { quality, size, usability, total });
+        const quality = avgRatings.average_quality ? Number(avgRatings.average_quality) : 0;
+        const size = avgRatings.average_size ? Number(avgRatings.average_size) : 0;
+        const usability = avgRatings.average_usability ? Number(avgRatings.average_usability) : 0;
+        const total = avgRatings.average_total ? Number(avgRatings.average_total) : 0;
 
         document.querySelector("#avg-quality").textContent = quality.toFixed(2);
         document.querySelector("#avg-size").textContent = size.toFixed(2);
         document.querySelector("#avg-usability").textContent = usability.toFixed(2);
         document.querySelector("#avg-total").textContent = total.toFixed(2);
+
+        console.log("Medias actualizadas en el DOM:", {
+            quality,
+            size,
+            usability,
+            total,
+        });
     }
 
     function updateUserRating(userRating) {
@@ -693,6 +698,7 @@
         if (qualityElement) qualityElement.value = userRating.quality || "";
         if (sizeElement) sizeElement.value = userRating.size || "";
         if (usabilityElement) usabilityElement.value = userRating.usability || "";
+
     }
 
 

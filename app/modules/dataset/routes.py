@@ -328,6 +328,7 @@ def rate():
         db.session.commit()
 
         avg_ratings = rating_service.get_average_rating(dataset_id)
+        avg_ratings = {key: float(value) for key, value in avg_ratings.items()}
 
         return jsonify({
             "message": "Calificación guardada correctamente",
