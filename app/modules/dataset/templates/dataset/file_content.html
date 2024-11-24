@@ -46,16 +46,33 @@
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
                                             <li>
-                                                <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">UVL</a>
-                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">Glencoe</a>
+                                                <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">
+                                                    UVL
+                                                </a>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">
+                                                    Glencoe
+                                                </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">DIMACS</a>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">
+                                                    DIMACS
+                                                </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">SPLOT</a>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">
+                                                    SPLOT
+                                                </a>
                                             </li>
-                                        </ul>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_json', file_id=file.id) }}">
+                                                    JSON
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_afm', file_id=file.id) }}">
+                                                    AFM
+                                                </a>
+                                            </li>
                                     </div>
                                 </div>
                             {% endif %}
