@@ -12,6 +12,7 @@ from core.managers.config_manager import ConfigManager
 from core.managers.error_handler_manager import ErrorHandlerManager
 from core.managers.logging_manager import LoggingManager
 
+
 # Load environment variables
 load_dotenv()
 
@@ -22,6 +23,7 @@ migrate = Migrate()
 
 def create_app(config_name='development'):
     app = Flask(__name__)
+
 
     # Load configuration according to environment
     config_manager = ConfigManager(app)

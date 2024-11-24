@@ -1,0 +1,217 @@
+{% extends "base_template.html" %}
+
+{% block title %}File content{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 style="margin-bottom: 0px; font-size: 1.8rem; font-weight: bold;">
+                        <a href="{{ dataset.get_uvlhub_doi() }}" style="text-decoration: none; color: inherit;">
+                            {{ dataset.ds_meta_data.title }}
+                        </a>
+                        {% for feature_model in dataset.feature_models %}
+                            {% for file in feature_model.files %}
+                                {% if file.id == file_id %}
+                                    / {{ file.name }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </h4>
+
+                    {% for feature_model in dataset.feature_models %}
+                        {% for file in feature_model.files %}
+                            {% if file.id == file_id %}
+                                <div class="d-flex">
+                                    <div class="btn-group me-2" role="group">
+                                        <button id="btnGroupDrop{{ file.id }}" type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 5px;">
+                                            <i data-feather="check"></i> Check
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ file.id }}">
+                                            <li>
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="checkUVL('{{ file.id }}')">Syntax check</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.valid', file_id=file.id) }}">SAT validity check</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupDropExport{{ file.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 5px;">
+                                            <i data-feather="download"></i> Export
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">
+                                                    UVL
+                                                </a>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">
+                                                    Glencoe
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">
+                                                    DIMACS
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">
+                                                    SPLOT
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_json', file_id=file.id) }}">
+                                                    JSON
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ url_for('flamapy.to_afm', file_id=file.id) }}">
+                                                    AFM
+                                                </a>
+                                            </li>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% for feature_model in dataset.feature_models %}
+                {% for file in feature_model.files %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i data-feather="file"></i> 
+                            <button onclick="window.location.href='/file_content/{{ dataset.id }}/{{ file.id }}'" style="background: none; border: none; padding: 0; cursor: pointer; color: inherit;">
+                                {{ file.name }}
+                            </button>
+                        </div>
+                        <div id="check_{{ file.id }}"></div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div> 
+    </div>
+
+    <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
+        {% for feature_model in dataset.feature_models %}
+            {% for file in feature_model.files %}
+                {% if file.id == file_id %}
+                    <div class="list-group-item">
+                        <div id="fileViewerModal" class="custom-modal" tabindex="-1" aria-labelledby="fileViewerModalLabel" aria-hidden="false" style="width: 100%; margin-top: 20px;">
+                            <div class="modal-dialog modal-lg" style="height: auto; display: flex; align-items: flex-start;">
+                                <div class="modal-content" style="height: auto;">
+                                    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h5>Contenido del archivo {{ file.name }} :</h5>
+                                        <div>
+                                            <a href="#" class="btn btn-outline-primary btn-sm" id="downloadButton" style="margin-right: 5px; margin-bottom: 5px; border-radius: 5px;">
+                                                <i data-feather="download"></i>
+                                            </a>
+                                            <button onclick="copyToClipboard()" class="btn btn-outline-secondary btn-sm" style="margin-right: 5px; margin-bottom: 5px; border-radius: 5px;">
+                                                <i data-feather="copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body" style="overflow-y: auto; height: auto;">
+                                        <pre id="fileContent" style="height: 100%; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; background-color: #f5f5f5; padding: 20px; border-radius: 5px; border: 1px solid #ccc;"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+        feather.replace();
+    });
+
+    var currentFileId;
+
+    function viewFile(fileId) {
+        fetch(`/file/view/${fileId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('fileContent').textContent = data.content;
+                currentFileId = fileId;
+                document.getElementById('downloadButton').href = `/file/download/${fileId}`;
+            })
+            .catch(error => console.error('Error loading file:', error));
+    }
+    window.onload = function() {
+        viewFile('{{ file_id }}');
+    };
+
+    function showLoading() {
+        document.getElementById("loading").style.display = "initial";
+    }
+
+    function hideLoading() {
+        document.getElementById("loading").style.display = "none";
+    }
+
+    function checkUVL(file_id) {
+    const outputDiv = document.getElementById('check_' + file_id);
+    outputDiv.innerHTML = ''; // Clear previous output
+
+    fetch(`/flamapy/check_uvl/${file_id}`)
+        .then(response => {
+            return response.json().then(data => ({
+                status: response.status,
+                data
+            }));
+        })
+        .then(({ status, data }) => {
+            if (status === 400) {
+                // Display errors
+                if (data.errors) {
+                    outputDiv.innerHTML = '<span class="badge badge-danger">Errors:</span>';
+                    data.errors.forEach(error => {
+                        const errorElement = document.createElement('span');
+                        errorElement.className = 'badge badge-danger';
+                        errorElement.textContent = error;
+                        outputDiv.appendChild(errorElement);
+                        outputDiv.appendChild(document.createElement('br')); // Line break for better readability
+                    });
+                } else {
+                    outputDiv.innerHTML = `<span class="badge badge-danger">Error: ${data.error}</span>`;
+                }
+            } else if (status === 200) {
+                // Display success message
+                outputDiv.innerHTML = '<span class="badge badge-success">Valid Model</span>';
+            } else {
+                // Handle unexpected status
+                outputDiv.innerHTML = `<span class="badge badge-warning">Unexpected response status: ${status}</span>`;
+            }
+        })
+        .catch(error => {
+            // Handle fetch errors
+            outputDiv.innerHTML = `<span class="badge badge-danger">An unexpected error occurred: ${error.message}</span>`;
+        });
+}
+
+
+function copyToClipboard() {
+        const text = document.getElementById('fileContent').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('Text copied to clipboard');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+
+</script>
+
+{% endblock %}
+
+
+
