@@ -59,3 +59,24 @@ def unfollow(user_id):
     else:
         flash(message, "error")
     return redirect(url_for('profile.other_profile', user_id=user_id))
+
+
+@social_bp.route('/get_comments', methods=['GET'])
+def get_comments():
+    social_service = SocialService()
+    dataset_id = request.args.get('dataset_id')
+    messages = social_service.fetch_comments(dataset_id)
+    return jsonify(messages)
+
+
+@social_bp.route('/send_comment', methods=['POST'])
+@login_required
+def send_comment():
+    social_service = SocialService()
+    data = request.json
+    follower_id = current_user.id
+    followed_id = data['followed_id']
+    dataset_id = data['dataset_id']
+    text = data['text']
+    social_service.send_comments(follower_id, followed_id, dataset_id, text)
+    return '', 204
