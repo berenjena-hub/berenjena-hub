@@ -33,6 +33,9 @@ from app.modules.dataset.services import (
     DOIMappingService
 )
 from app.modules.zenodo.services import ZenodoService
+from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter, JSONWriter, AFMWriter
+from flamapy.metamodels.pysat_metamodel.transformations import FmToPysat, DimacsWriter
+from app.modules.hubfile.services import HubfileService
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +201,107 @@ def download_dataset(dataset_id):
                         os.path.basename(zip_path[:-4]), relative_path
                     ),
                 )
+
+    user_cookie = request.cookies.get("download_cookie")
+    if not user_cookie:
+        user_cookie = str(
+            uuid.uuid4()
+        )  # Generate a new unique identifier if it does not exist
+        # Save the cookie to the user's browser
+        resp = make_response(
+            send_from_directory(
+                temp_dir,
+                f"dataset_{dataset_id}.zip",
+                as_attachment=True,
+                mimetype="application/zip",
+            )
+        )
+        resp.set_cookie("download_cookie", user_cookie)
+    else:
+        resp = send_from_directory(
+            temp_dir,
+            f"dataset_{dataset_id}.zip",
+            as_attachment=True,
+            mimetype="application/zip",
+        )
+
+    # Check if the download record already exists for this cookie
+    existing_record = DSDownloadRecord.query.filter_by(
+        user_id=current_user.id if current_user.is_authenticated else None,
+        dataset_id=dataset_id,
+        download_cookie=user_cookie
+    ).first()
+
+    if not existing_record:
+        # Record the download in your database
+        DSDownloadRecordService().create(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            dataset_id=dataset_id,
+            download_date=datetime.now(timezone.utc),
+            download_cookie=user_cookie,
+        )
+
+    return resp
+
+
+@dataset_bp.route("/dataset/download/<int:dataset_id>/<string:format>", methods=["GET"])
+def download_dataset_format(dataset_id, format):
+    dataset = dataset_service.get_or_404(dataset_id)
+    file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+
+    temp_dir = tempfile.mkdtemp()
+    zip_path = os.path.join(temp_dir, f"dataset_{dataset_id}.zip")
+
+    with ZipFile(zip_path, "w") as zipf:
+        for subdir, dirs, files in os.walk(file_path):
+            for file in dataset.files():
+                full_path = os.path.join(subdir, file.name)
+                with open(full_path, "r") as file_content:
+                    content = file_content.read()
+                name = f"{file.name}"
+                if format == "glencoe":
+                    hubfile = HubfileService().get_or_404(file.id)
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    GlencoeWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_glencoe.txt"
+                elif format == "dimacs":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.cnf', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    sat = FmToPysat(fm).transform()
+                    DimacsWriter(temp_file.name, sat).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_cnf.txt"
+                elif format == "splot":
+                    hubfile = HubfileService().get_by_id(file.id)
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    SPLOTWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_splot.txt"
+                elif format == "json":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    JSONWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_json.txt"
+                elif format == "afm":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.afm', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    AFMWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_afm.txt"
+                with zipf.open(name, "w") as zipfile:
+                    zipfile.write(content.encode())
 
     user_cookie = request.cookies.get("download_cookie")
     if not user_cookie:
