@@ -1,19 +1,26 @@
-# app/modules/dashboard/router.py
-
 from flask import Blueprint, render_template
+from app.modules.dataset.services import DataSetService
+from app.modules.featuremodel.services import FeatureModelService
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard', template_folder='templates')
 
 @dashboard_bp.route('/')
 def index():
-    # Datos de ejemplo
-    total_datasets = 100
-    total_views = 2500
-    new_uploads = 20
-    active_users = 75
+    dataset_service = DataSetService()
+    feature_model_service = FeatureModelService()
 
-    return render_template('dashboard.html', 
+    # Obtener estadísticas
+    total_datasets = dataset_service.count_synchronized_datasets()
+    total_feature_models = feature_model_service.count_feature_models()
+    total_dataset_downloads = dataset_service.total_dataset_downloads()
+    total_feature_model_downloads = feature_model_service.total_feature_model_downloads()
+    total_dataset_views = dataset_service.total_dataset_views()
+    total_feature_model_views = feature_model_service.total_feature_model_views()
+
+    return render_template('dashboard.html',
                            total_datasets=total_datasets,
-                           total_views=total_views,
-                           new_uploads=new_uploads,
-                           active_users=active_users)
+                           total_feature_models=total_feature_models,
+                           total_dataset_downloads=total_dataset_downloads,
+                           total_feature_model_downloads=total_feature_model_downloads,
+                           total_dataset_views=total_dataset_views,
+                           total_feature_model_views=total_feature_model_views)
