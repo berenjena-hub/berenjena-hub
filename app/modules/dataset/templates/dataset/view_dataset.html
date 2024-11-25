@@ -245,177 +245,20 @@
                     </span>
                     <span class="doi_text">{{ dataset.get_uvlhub_doi() }}</span>
                 </button>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
 
-
-
-
-
-
-
-<!--<div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
-
-        <div class="list-group">
-
-            <div class="list-group-item">
-
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-between align-items-center">
-                        <h4 style="margin-bottom: 0px">UVL models</h4>
-                        <h4 style="margin-bottom: 0px;"><span class="badge bg-dark">{{ dataset.get_files_count() }}</span></h4>
-                    </div>
-                </div>
-                
-
-            </div>
-            
-
-            {% for feature_model in dataset.feature_models %}
-                {% for file in feature_model.files %}
-                    <div class="list-group-item">
-                        
-                        <div class="row">
-                            <div class="col-12">
-
-                                <div class="row">
-                                    <div class="col-8">
-                                        <i data-feather="file"></i> {{ file.name }}
-                                        <br>
-                                        <small class="text-muted">({{ file.get_formatted_size() }})</small>
-                                    </div>
-                                    <div class="col-2">
-                                        <div id="check_{{ file.id }}">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                
-                            </div>
-                            <div class="col-12 text-end" >
-
-                                <button onclick="viewFile('{{ file.id }}')" class="btn btn-outline-secondary btn-sm" style="border-radius: 5px;">
-                                    <i data-feather="eye"></i> View
-                                </button>
-
-                                <div class="btn-group" role="group">
-                                    <button id="btnGroupDrop{{ file.id }}" type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
-                                        <i data-feather="check"></i> Check
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ file.id }}">
-                                        <li>
-                                            <a class="dropdown-item" href="javascript:void(0);" onclick="checkUVL('{{ file.id }}')">Syntax check</a>
-                                        </li>
-                                        <!--
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.valid', file_id=file.id) }}">SAT validity check</a>
-                                        </li>
-                                        --
-                                    </ul>
-                                </div>
-                                
-                                <div class="btn-group" role="group">
-                                    <button id="btnGroupDropExport{{ file.id }}" type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 5px;">
-                                        <i data-feather="download"></i> Export
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDropExport{{ file.id }}">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('hubfile.download_file', file_id=file.id) }}">
-                                                UVL
-                                            </a>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_glencoe', file_id=file.id) }}">
-                                                Glencoe
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_cnf', file_id=file.id) }}">
-                                                DIMACS
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_splot', file_id=file.id) }}">
-                                                SPLOT
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_json', file_id=file.id) }}">
-                                                JSON
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('flamapy.to_afm', file_id=file.id) }}">
-                                                AFM
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                
-                                
-
-                            </div>
+                <div class="card-body mt-3">
+                    <div class="row">
+                        <div class="col-md-4 text-secondary">Other Download Options:</div>
+                        <div class="col-md-8">
+                            <a href="/dataset/download/{{ dataset.id }}" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>
+                                Download UVL({{ dataset.get_file_total_size_for_human() }})</a>
+                            <a href="/dataset/download/{{ dataset.id }}/glencoe" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>Download Glencoe({{ dataset.get_file_total_size_for_human() }})</a>
+                            <a href="/dataset/download/{{ dataset.id }}/dimacs" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>Download DIMACS({{ dataset.get_file_total_size_for_human() }})</a>
+                            <a href="/dataset/download/{{ dataset.id }}/splot" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>Download SPLOT({{ dataset.get_file_total_size_for_human() }})</a>
+                            <a href="/dataset/download/{{ dataset.id }}/json" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>Download JSON({{ dataset.get_file_total_size_for_human() }})</a>
+                            <a href="/dataset/download/{{ dataset.id }}/afm" class="btn btn-primary mt-1"> <i data-feather="download" class="center-button-icon"></i>Download AFM({{ dataset.get_file_total_size_for_human() }})</a>
                         </div>
                     </div>
-                {% endfor %}
-            {% endfor %}
-        </div> -->
-        
-        
-<!-- Contenedor para los botones de descarga -->
-<div class="row mb-3">
-    <div class="col-12">
-        <a href="/dataset/download/{{ dataset.id }}" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download UVL({{ dataset.get_file_total_size_for_human() }})
-        </a>
-        <a href="/dataset/download/{{ dataset.id }}/glencoe" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download Glencoe({{ dataset.get_file_total_size_for_human() }})
-        </a>
-        <a href="/dataset/download/{{ dataset.id }}/dimacs" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download DIMACS({{ dataset.get_file_total_size_for_human() }})
-        </a>
-        <a href="/dataset/download/{{ dataset.id }}/splot" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download SPLOT({{ dataset.get_file_total_size_for_human() }})
-        </a>
-        <a href="/dataset/download/{{ dataset.id }}/json" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download JSON({{ dataset.get_file_total_size_for_human() }})
-        </a>
-        <a href="/dataset/download/{{ dataset.id }}/afm" class="btn btn-primary mt-3" style="border-radius: 5px;">
-            <i data-feather="download" class="center-button-icon"></i>
-            Download AFM({{ dataset.get_file_total_size_for_human() }})
-        </a>
-    </div>
-</div>
-
-<!-- Contenedor para los comentarios -->
-<div class="row">
-    <div id="Ids-necesarios" currentId="{{current_user.id}}" followedId="{{ dataset.user.profile.user.id}}" datasetId="{{dataset.id}}" disable></div>
-    <div id="comment-container" class="col-12 col-md-8 col-lg-9 hidden">
-        <div class="card shadow-sm">
-            <div class="card-header card-dark">
-                <h5 id="comment-title" class="card-title mb-0" style="color: white; font-size: 15px;">
-                    Comments
-                </h5>
-            </div>
-            <div id="comment-messages" class="card-body chat-messages" style="height: 400px; overflow-y: auto; background-color: #f9f9f9;">
-            </div>
-            {% if current_user.id %}
-            <div class="card-footer">
-                <div class="d-flex">
-                    <input type="text" id="message-input" class="form-control me-2" placeholder="Escribe un comentario...">
-                    <button id="send-button" type="button" class="btn btn-success">Enviar</button>
-                </div>
-            </div>
-            {% else %}
-            <div class="card-footer">
-                <div class="d-flex">
-                    Inicia sesión o registrate para comentar
                 </div>
             </div>
             {% endif %}
