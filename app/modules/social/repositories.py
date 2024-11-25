@@ -30,6 +30,23 @@ class SocialRepository(BaseRepository):
 
         return conversation
 
+    def save_comments(self, follower_id, followed_id, dataset_id, text):
+        message = Social(follower=follower_id, followed=followed_id, text=text, comment=True,
+                         data_set=dataset_id, created_at=datetime.now(timezone.utc))
+        self.session.add(message)
+        self.session.commit()
+        return message
+
+    def get_comments(self, dataset_id):
+        sent_messages = self.model.query.filter_by(
+            data_set=dataset_id,
+            comment=True
+        ).all()
+
+        sent_messages.sort(key=lambda message: message.created_at)
+
+        return sent_messages
+
 
 class FollowRepository(BaseRepository):
     def __init__(self):
