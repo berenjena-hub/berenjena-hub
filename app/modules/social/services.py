@@ -30,6 +30,33 @@ class SocialService(BaseService):
             for msg in messages
         ]
 
+    def send_comments(self, follower_id, followed_id, dataset_id, text):
+        self.repository.save_comments(follower_id, followed_id, dataset_id, text)
+        return True, None
+
+    def fetch_comments(self, dataset_id):
+        # Obtener los mensajes relacionados con el dataset
+        messages = self.repository.get_comments(dataset_id)
+
+        # Extraer todos los IDs únicos de los seguidores (usuarios que enviaron los mensajes)
+        follower_ids = {msg.follower for msg in messages}
+
+        # Realizar una única consulta para obtener los datos de los usuarios
+        users = db.session.query(User).filter(User.id.in_(follower_ids)).all()
+
+        # Crear un mapa para acceder a los usuarios por su ID
+        user_map = {user.id: user for user in users}
+
+        # Generar la respuesta final con los datos requeridos
+        return [
+            {
+                "text": msg.text,
+                "sender": f"{user_map[msg.follower].profile.name} {user_map[msg.follower].profile.surname}",
+                "created_at": msg.created_at.isoformat()
+            }
+            for msg in messages
+        ]
+
 
 class FollowService(BaseService):
     def __init__(self):
