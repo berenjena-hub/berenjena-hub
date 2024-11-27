@@ -17,11 +17,13 @@ class SocialRepository(BaseRepository):
     def get_messages_between(self, follower_id, followed_id):
         sent_messages = self.model.query.filter_by(
             follower=follower_id,
-            followed=followed_id
+            followed=followed_id,
+            comment=False
         ).all()
         received_messages = self.model.query.filter_by(
             follower=followed_id,
-            followed=follower_id
+            followed=follower_id,
+            comment=False
         ).all()
 
         conversation = sent_messages + received_messages
