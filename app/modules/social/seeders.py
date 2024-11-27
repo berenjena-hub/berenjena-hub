@@ -11,8 +11,9 @@ class SocialSeeder(BaseSeeder):
         
         user1 = User.query.filter_by(email='user1@example.com').first()
         user2 = User.query.filter_by(email='user2@example.com').first()
+        user3 = User.query.filter_by(email='user3@example.com').first()
+        user4 = User.query.filter_by(email='user4@example.com').first()
         dataset_ids = [dataset.id for dataset in DataSet.query.all()]
-
 
         if not user1 or not user2:
             raise Exception("Users not found. Please seed users first.")
@@ -66,6 +67,14 @@ class SocialSeeder(BaseSeeder):
             Follow(
                 follower_id=user2.id,
                 followed_id=user1.id,
+            ),
+            Follow(
+                follower_id=user3.id,
+                followed_id=user4.id,
+            ),
+            Follow(
+                follower_id=user4.id,
+                followed_id=user3.id,
             )
         ]
 
