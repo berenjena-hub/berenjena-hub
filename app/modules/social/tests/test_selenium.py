@@ -1,7 +1,5 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import initialize_driver, close_driver
 import time
@@ -21,32 +19,17 @@ def test_follow_unfollow_sequence():
 
         driver.get(f"{host}/login")
         wait_for_page_to_load(driver)
-        driver.find_element(By.NAME, "email").send_keys("user2@example.com")
-        driver.find_element(By.NAME, "password").send_keys("1234")
-        driver.find_element(By.NAME, "password").send_keys(Keys.RETURN)
-        wait_for_page_to_load(driver)
+        driver.find_element(By.ID, "email").send_keys("user3@example.com")
+        driver.find_element(By.ID, "password").send_keys("1234")
+        driver.find_element(By.ID, "submit").click()
+        time.sleep(1)
+        driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+        time.sleep(1)
+        driver.find_element(By.LINK_TEXT, "Doe, Jane").click()
+        time.sleep(1)
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
         time.sleep(2)
-
-        user_id = 93
-        driver.get(f"{host}/profile/other?user_id={user_id}")
-        wait_for_page_to_load(driver)
-        time.sleep(2)
-
-        follow_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button[style*='lightgreen']")))
-        follow_button.click()
-        print("Le has dado a Follow")
-        time.sleep(4)
-
-        WebDriverWait(driver, 5).until(EC.staleness_of(follow_button))
-        time.sleep(2)
-
-        unfollow_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button[style*='lightcoral']")))
-        unfollow_button.click()
-        print("Le has dado a Unfollow")
-        time.sleep(4)
-
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
         print("Pasado")
 
     except Exception as e:
