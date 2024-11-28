@@ -165,17 +165,18 @@
                     <input type="hidden" id="user_id" value="{{ current_user.id }}">
                     <input type="hidden" id="dataset_id" value="{{ dataset.id }}">
                     
-                    <label>Quality:
-                        <input id="quality" type="number" />
-                    </label>
-                    
-                    <label>Size:
-                        <input id="size" type="number" />
-                    </label>
-                    
-                    <label>Usability:
-                        <input id="usability" type="number" />
-                    </label>
+                    <label for="quality">Quality (1-5):</label>
+                    <input id="quality" name="quality" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
+                    <label for="size">Size (1-5):</label>
+                    <input id="size" name="size" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
+                    <label for="usability">Usability (1-5):</label>
+                    <input id="usability" name="usability" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
                     
                     <button id="submit-rating">Submit Rating</button>
                 </form>
@@ -616,8 +617,13 @@
         const size = getSizeRating();
         const usability = getUsabilityRating();
 
-        if (!userId || !datasetId || !quality || !size || !usability) {
+        if (!datasetId || !quality || !size || !usability) {
             alert("Por favor, complete todos los campos de la calificación.");
+            return;
+        }
+        
+        if (!userId) {
+            alert("Debes iniciar sesión para enviar una calificación.");
             return;
         }
 
