@@ -155,10 +155,10 @@
                 </div>
 
                 <h2>Average Ratings</h2>
-                <p>Quality: <span id="avg-quality">0</span></p>
-                <p>Size: <span id="avg-size">0</span></p>
-                <p>Usability: <span id="avg-usability">0</span></p>
-                <p>Overall Rating: <span id="avg-total">0</span></p>                
+                <p>Quality: <span id="avg-quality">Loading...</span></p>
+                <p>Size: <span id="avg-size">Loading...</span></p>
+                <p>Usability: <span id="avg-usability">Loading...</span></p>
+                <p>Overall Rating: <span id="avg-total">Loading...</span></p>                
 
                 <h3>Rate This Dataset</h3>
                 <form id="rating-form">
@@ -546,6 +546,65 @@
         }
     });
 
+    async function loadAverageRatings(datasetId) {
+        try {
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error loading ratings: ${response.status}`);
+
+            const data = await response.json();
+            console.log("Datos recibidos del servidor:", data); 
+            if (data.avg_ratings) {
+                updateAverageRatings(data.avg_ratings);
+            } else {
+                console.warn("No se encontraron medias en la respuesta del servidor.");
+            }
+        } catch (error) {
+            console.error("Error loading average ratings:", error);
+            alert("Failed to load ratings. Please try again.");
+        }
+    }
+
+    function updateAverageRatings(avgRatings) {
+        if (!avgRatings) {
+            console.warn("No se proporcionaron datos de promedios para actualizar.");
+            return;
+        }
+
+        console.log("Datos originales del servidor:", avgRatings);
+
+        const numericRatings = {
+            quality: parseFloat(avgRatings.average_quality || avgRatings.quality) || 0,
+            size: parseFloat(avgRatings.average_size || avgRatings.size) || 0,
+            usability: parseFloat(avgRatings.average_usability || avgRatings.usability) || 0,
+            total: parseFloat(avgRatings.average_total || avgRatings.total) || 0,
+        };
+
+        console.log("Datos convertidos a números:", numericRatings);
+
+        for (const key in numericRatings) {
+            if (numericRatings[key] === 0 && avgRatings[key]) {
+                console.error(`El valor para '${key}' no fue convertido correctamente. Verifica su formato.`);
+            }
+        }
+
+        const elementsToUpdate = {
+            "avg-quality": numericRatings.quality,
+            "avg-size": numericRatings.size,
+            "avg-usability": numericRatings.usability,
+            "avg-total": numericRatings.total,
+        };
+
+        for (const id in elementsToUpdate) {
+            const element = document.querySelector(`#${id}`);
+            if (element) {
+                element.textContent = elementsToUpdate[id].toFixed(2);
+            } else {
+                console.error(`Elemento con ID ${id} no encontrado.`);
+            }
+        }
+
+        console.log("Medias actualizadas en el DOM:", numericRatings);
+    }
 
 
     async function submitRating(event) {
@@ -571,9 +630,9 @@
                 body: JSON.stringify({
                     user_id: userId,
                     dataset_id: datasetId,
-                    quality: quality,
-                    size: size,
-                    usability: usability,
+                    quality,
+                    size,
+                    usability,
                 }),
             });
 
@@ -593,6 +652,35 @@
             console.error("Error al enviar la calificación:", error);
             alert("Hubo un error al enviar la calificación. Intenta nuevamente.");
         }
+    }
+
+    async function loadUserRating(datasetId) {
+        try {
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error al cargar user rating: ${response.status}`);
+
+            const data = await response.json();
+            if (data.user_rating) updateUserRating(data.user_rating);
+        } catch (error) {
+            console.error("Error loading user rating:", error);
+        }
+    }
+
+    function updateUserRating(userRating) {
+        if (!userRating) {
+            console.warn("No se proporcionaron datos de calificación del usuario para actualizar.");
+            return;
+        }
+
+        console.log("Actualizando calificación del usuario con datos:", userRating);
+
+        const qualityElement = document.getElementById('quality');
+        const sizeElement = document.getElementById('size');
+        const usabilityElement = document.getElementById('usability');
+
+        if (qualityElement) qualityElement.value = userRating.quality || "";
+        if (sizeElement) sizeElement.value = userRating.size || "";
+        if (usabilityElement) usabilityElement.value = userRating.usability || "";
     }
 
 
@@ -630,80 +718,6 @@
         }
         return Number(usabilityInput.value);
     }
- 
-
-
-    async function loadAverageRatings(datasetId) {
-        try {
-            const response = await fetch(`/ratings/${datasetId}`);
-            if (!response.ok) throw new Error(`Error loading ratings: ${response.status}`);
-
-            const data = await response.json();
-            if (data.avg_ratings) {
-                updateAverageRatings(data.avg_ratings);
-            } else {
-                console.warn("No se encontraron medias en la respuesta del servidor.");
-            }
-        } catch (error) {
-            console.error("Error loading average ratings:", error);
-            alert("Failed to load ratings. Please try again.");
-        }
-    }
-
-    async function loadUserRating(datasetId) {
-        try {
-            const response = await fetch(`/ratings/${datasetId}`);
-            if (!response.ok) throw new Error(`Error al cargar user rating: ${response.status}`);
-
-            const data = await response.json();
-            if (data.user_rating) updateUserRating(data.user_rating);
-        } catch (error) {
-            console.error("Error loading user rating:", error);
-        }
-    }
-
-    function updateAverageRatings(avgRatings) {
-        if (!avgRatings) {
-            console.warn("No se proporcionaron datos de promedios para actualizar.");
-            return;
-        }
-
-        console.log("Actualizando las medias con:", avgRatings);
-
-        const quality = avgRatings.average_quality ? Number(avgRatings.average_quality) : 0;
-        const size = avgRatings.average_size ? Number(avgRatings.average_size) : 0;
-        const usability = avgRatings.average_usability ? Number(avgRatings.average_usability) : 0;
-        const total = avgRatings.average_total ? Number(avgRatings.average_total) : 0;
-
-        document.querySelector("#avg-quality").textContent = quality.toFixed(2);
-        document.querySelector("#avg-size").textContent = size.toFixed(2);
-        document.querySelector("#avg-usability").textContent = usability.toFixed(2);
-        document.querySelector("#avg-total").textContent = total.toFixed(2);
-
-        console.log("Medias actualizadas en el DOM:", {
-            quality,
-            size,
-            usability,
-            total,
-        });
-    }
-
-    function updateUserRating(userRating) {
-        if (!userRating) return;
-
-        const qualityElement = document.getElementById('quality');
-        const sizeElement = document.getElementById('size');
-        const usabilityElement = document.getElementById('usability');
-
-        if (qualityElement) qualityElement.value = userRating.quality || "";
-        if (sizeElement) sizeElement.value = userRating.size || "";
-        if (usabilityElement) usabilityElement.value = userRating.usability || "";
-
-    }
-
-
-
-
 
 </script>
 

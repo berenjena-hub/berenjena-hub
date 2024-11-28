@@ -425,10 +425,10 @@ def get_ratings(dataset_id):
 
         return jsonify({
             "avg_ratings": {
-                "quality": avg_ratings.average_quality,
-                "size": avg_ratings.average_size,
-                "usability": avg_ratings.average_usability,
-                "total": avg_ratings.average_total,
+                "quality": avg_ratings.average_quality or 0,
+                "size": avg_ratings.average_size or 0,
+                "usability": avg_ratings.average_usability or 0,
+                "total": avg_ratings.average_total or 0,
             },
             "user_rating": {
                 "quality": user_rating.quality if user_rating else None,
