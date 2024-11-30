@@ -177,7 +177,28 @@ def test_downloaddatasetsinhome(self):
     time.sleep(2)
 
 
+def test_downloaddatasetsindatasetview(self):
+    self.driver.get("http://localhost:5000/")
+    self.driver.set_window_size(1854, 1048)
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download UVL(1.21 KB)").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download Glencoe(1.21 KB)").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download DIMACS(1.21 KB)").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download SPLOT(1.21 KB)").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download JSON(1.21 KB)").click()
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Download AFM(1.21 KB)").click()
+    time.sleep(2)
+
+
 # Call the test function
 test_upload_dataset()
 test_downloadfilesindatasetview()
 test_downloaddatasetsinhome()
+test_downloaddatasetsindatasetview()
