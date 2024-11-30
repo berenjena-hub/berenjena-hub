@@ -131,5 +131,34 @@ def test_upload_dataset():
         close_driver(driver)
 
 
+def test_downloadfilesindatasetview(self):
+    self.driver.get("http://localhost:5000/")
+    self.driver.set_window_size(1854, 1048)
+    time.sleep(2)
+    self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+    time.sleep(2)
+    self.driver.find_element(By.CSS_SELECTOR, ".list-group-item:nth-child(2) button").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "UVL").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "Glencoe").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "DIMACS").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "SPLOT").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "JSON").click()
+    time.sleep(2)
+    self.driver.find_element(By.ID, "btnGroupDropExport34").click()
+    self.driver.find_element(By.LINK_TEXT, "AFM").click()
+    time.sleep(2)
+
+
 # Call the test function
 test_upload_dataset()
+test_downloadfilesindatasetview()
