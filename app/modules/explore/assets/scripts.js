@@ -24,13 +24,15 @@ function send_query() {
                 size: document.querySelector('#size').value, 
                 author: document.querySelector('#authors').value, 
                 files: document.querySelector('#files').value,
-                title: document.querySelector('#title').value
+                title: document.querySelector('#title').value,
+                tag: document.querySelector('#tag').value
             };
 
             console.log(document.querySelector('#publication_type').value);
             console.log(document.querySelector('#size').value);
             console.log(document.querySelector('#files').value);
             console.log(document.querySelector('#title').value);
+            console.log(document.querySelector('#tag').value);
             
 
 
@@ -50,6 +52,7 @@ function send_query() {
                 
                 populateAuthorsFilter(data);
                 populateTitleFilter(data);
+                populateTagFilter(data);
 
                 
                 const filteredData = data.filter(dataset => {
@@ -61,6 +64,9 @@ function send_query() {
                         ? dataset.title.some(title => title === searchCriteria.title) 
                         : dataset.title === searchCriteria.title);
                     const files = dataset.files_count;
+                    const tagMatches = 
+                    searchCriteria.tag === "any" || 
+                    (Array.isArray(dataset.tags) && dataset.tags.includes(searchCriteria.tag));
 
                     let sizeMatches = true;
                     switch (searchCriteria.size) {
@@ -126,7 +132,7 @@ function send_query() {
                             break;
                     }
                     
-                    return sizeMatches && authorMatches && filesMatches && titleMatches;
+                    return sizeMatches && authorMatches && filesMatches && titleMatches && tagMatches;
                 });
 
                 // results counter
@@ -253,6 +259,33 @@ function populateTitleFilter(data) {
         titleSelect.value = currentTitle;
     }
 }
+
+function populateTagFilter(data) {
+    const tagSet = new Set();
+    data.forEach(dataset => {
+        if (Array.isArray(dataset.tags)) {
+            dataset.tags.forEach(tag => tagSet.add(tag));
+        }
+    });
+
+    console.log(tagSet);
+    const tagSelect = document.getElementById('tag');
+    const currentTag = tagSelect.value;
+    tagSelect.innerHTML = '<option value="any">Any</option>';
+
+    tagSet.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag;
+        option.textContent = tag;
+        tagSelect.appendChild(option);
+    });
+
+    if (tagSet.has(currentTag)) {
+        tagSelect.value = currentTag;
+    }
+}
+
+
 
 
 function formatDate(dateString) {
