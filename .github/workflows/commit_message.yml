@@ -1,0 +1,28 @@
+name: Comprobar mensaje del commits
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  comprobar-mensaje-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check commit message
+        id: commit_message
+        run: |
+          message=$(git log --format=%s -n 1)
+          echo "Commit message: $message"
+          if [[ $message =~ ^(feat|fix|style|refactor|test)\(.+\):. || $message =~ ^Merge ]]; then
+            echo "Formato correcto"
+          else
+            echo "Error: El mensaje del commit no sigue el formato esperado"
+            echo "Mensaje: '$message'"
+            echo "Formato esperado: <tipo>(<WI>): <descripción> #<número issue>"
+            echo "Ejemplo válido: feat(Funcionalidad): Nuevos cambios #6"
+            exit 1
+          fi

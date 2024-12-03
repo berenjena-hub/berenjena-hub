@@ -36,6 +36,9 @@ from app.modules.dataset.services import (
     RatingService
 )
 from app.modules.zenodo.services import ZenodoService
+from flamapy.metamodels.fm_metamodel.transformations import UVLReader, GlencoeWriter, SPLOTWriter, JSONWriter, AFMWriter
+from flamapy.metamodels.pysat_metamodel.transformations import FmToPysat, DimacsWriter
+from app.modules.hubfile.services import HubfileService
 
 from sqlalchemy.orm import Session
 from app import db 
@@ -249,6 +252,107 @@ def download_dataset(dataset_id):
     return resp
 
 
+@dataset_bp.route("/dataset/download/<int:dataset_id>/<string:format>", methods=["GET"])
+def download_dataset_format(dataset_id, format):
+    dataset = dataset_service.get_or_404(dataset_id)
+    file_path = f"uploads/user_{dataset.user_id}/dataset_{dataset.id}/"
+
+    temp_dir = tempfile.mkdtemp()
+    zip_path = os.path.join(temp_dir, f"dataset_{dataset_id}.zip")
+
+    with ZipFile(zip_path, "w") as zipf:
+        for subdir, dirs, files in os.walk(file_path):
+            for file in dataset.files():
+                full_path = os.path.join(subdir, file.name)
+                with open(full_path, "r") as file_content:
+                    content = file_content.read()
+                name = f"{file.name}"
+                if format == "glencoe":
+                    hubfile = HubfileService().get_or_404(file.id)
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    GlencoeWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_glencoe.txt"
+                elif format == "dimacs":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.cnf', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    sat = FmToPysat(fm).transform()
+                    DimacsWriter(temp_file.name, sat).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_cnf.txt"
+                elif format == "splot":
+                    hubfile = HubfileService().get_by_id(file.id)
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.splx', delete=False)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    SPLOTWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_splot.txt"
+                elif format == "json":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.json', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    JSONWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_json.txt"
+                elif format == "afm":
+                    temp_file = tempfile.NamedTemporaryFile(suffix='.afm', delete=False)
+                    hubfile = HubfileService().get_by_id(file.id)
+                    fm = UVLReader(hubfile.get_path()).transform()
+                    AFMWriter(temp_file.name, fm).transform()
+                    with open(temp_file.name, "r") as new_format_file:
+                        content = new_format_file.read()
+                    name = f"{hubfile.name}_afm.txt"
+                with zipf.open(name, "w") as zipfile:
+                    zipfile.write(content.encode())
+
+    user_cookie = request.cookies.get("download_cookie")
+    if not user_cookie:
+        user_cookie = str(
+            uuid.uuid4()
+        )  # Generate a new unique identifier if it does not exist
+        # Save the cookie to the user's browser
+        resp = make_response(
+            send_from_directory(
+                temp_dir,
+                f"dataset_{dataset_id}.zip",
+                as_attachment=True,
+                mimetype="application/zip",
+            )
+        )
+        resp.set_cookie("download_cookie", user_cookie)
+    else:
+        resp = send_from_directory(
+            temp_dir,
+            f"dataset_{dataset_id}.zip",
+            as_attachment=True,
+            mimetype="application/zip",
+        )
+
+    # Check if the download record already exists for this cookie
+    existing_record = DSDownloadRecord.query.filter_by(
+        user_id=current_user.id if current_user.is_authenticated else None,
+        dataset_id=dataset_id,
+        download_cookie=user_cookie
+    ).first()
+
+    if not existing_record:
+        # Record the download in your database
+        DSDownloadRecordService().create(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            dataset_id=dataset_id,
+            download_date=datetime.now(timezone.utc),
+            download_cookie=user_cookie,
+        )
+
+    return resp
+
+
 @dataset_bp.route("/doi/<path:doi>/", methods=["GET"])
 def subdomain_index(doi):
 
@@ -342,71 +446,6 @@ def rate():
         logger.exception("Error al agregar la calificación")
         return jsonify({"error": str(e)}), 400
 
-    # @dataset_bp.route("/rate", methods=["POST"])
-    # @login_required
-    # def rate():
-    #     try:
-    #         user_id = request.json.get("user_id")
-    #         dataset_id = request.json.get("dataset_id")
-    #         quality = request.json.get("quality")
-    #         size = request.json.get("size")
-    #         usability = request.json.get("usability")
-
-    #         if not all([user_id, dataset_id, quality, size, usability]):
-    #             logger.error(f"Solicitud inválida: Faltan parámetros. Datos recibidos: {request.json}")
-    #             return jsonify({"message": "Faltan parámetros en la solicitud"}), 400
-
-    #         try:
-    #             quality = float(quality)
-    #             size = float(size)
-    #             usability = float(usability)
-
-    #             if not all(1 <= x <= 5 for x in [quality, size, usability]):
-    #                 logger.error("Las calificaciones deben estar entre 1 y 5.")
-    #                 return jsonify({"message": "Las calificaciones deben estar entre 1 y 5"}), 400
-    #         except ValueError as e:
-    #             logger.error(f"Error de conversión: {str(e)}")
-    #             return jsonify({"message": "Las calificaciones deben ser números válidos"}), 400
-
-    #         existing_rating = db.session.query(Rating).filter_by(user_id=user_id, dataset_id=dataset_id).first()
-    #         if existing_rating:
-    #             existing_rating.quality = quality
-    #             existing_rating.size = size
-    #             existing_rating.usability = usability
-    #             existing_rating.total_rating = (quality + size + usability) / 3
-    #             logger.info(f"Calificación actualizada para user_id={user_id}, dataset_id={dataset_id}")
-    #         else:
-    #             rating = Rating(
-    #                 user_id=user_id,
-    #                 dataset_id=dataset_id,
-    #                 quality=quality,
-    #                 size=size,
-    #                 usability=usability,
-    #                 total_rating=(quality + size + usability) / 3
-    #             )
-    #             db.session.add(rating)
-    #             logger.info(f"Calificación creada para user_id={user_id}, dataset_id={dataset_id}")
-
-    #         db.session.commit()
-
-    #         avg_ratings = rating_service.get_average_rating(dataset_id)
-
-    #         if not avg_ratings:
-    #             logger.warning(f"No se pudieron calcular las medias para dataset_id={dataset_id}")
-    #             return jsonify({"message": "Error al calcular las medias"}), 500
-
-    #         return jsonify({
-    #             "message": "Calificación guardada correctamente",
-    #             "avg_ratings": avg_ratings
-    #         }), 200
-
-    #     except Exception as e:
-    #         db.session.rollback()
-    #         logger.exception("Error al procesar la solicitud /rate")
-    #         return jsonify({"error": f"Error interno: {str(e)}"}), 500
-
-
-
 
 @dataset_bp.route('/ratings/<int:dataset_id>', methods=['GET'])
 def get_ratings(dataset_id):
@@ -459,4 +498,8 @@ def view_dataset(doi):
     )
 
 
+@dataset_bp.route("/file_content/<int:dataset_id>/<int:file_id>/", methods=["GET"])
+def get_file_content(file_id, dataset_id):
+    return render_template("dataset/file_content.html", file_id=file_id, 
+                           dataset=dataset_service.get_or_404(dataset_id))
 
