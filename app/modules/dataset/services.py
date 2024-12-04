@@ -143,6 +143,14 @@ class DataSetService(BaseService):
     def get_uvlhub_doi(self, dataset: DataSet) -> str:
         domain = os.getenv('DOMAIN', 'localhost')
         return f'http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}'
+    
+    #------------------------------------------------- para contar en dashborad ------------------------------------------------------------
+    def count_unsynchronized_datasets(self, current_user_id: int) -> int:
+        """
+        Cuenta los datasets no sincronizados del usuario actual.
+        """
+        unsynchronized_datasets = self.get_unsynchronized(current_user_id)
+        return len(unsynchronized_datasets) if unsynchronized_datasets else 0
 
     #AÑADIDO
     def get_dataset_with_ratings(self, dataset_id: int):
@@ -263,3 +271,4 @@ class RatingService(BaseService):
 
     def get_average_rating(self, dataset_id: int):
         return self.repository.get_average_rating(dataset_id)
+
