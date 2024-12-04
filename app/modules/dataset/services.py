@@ -7,15 +7,18 @@ import uuid
 
 from flask import request
 
+from app import db
+
 from app.modules.auth.services import AuthenticationService
-from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData
+from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData, Rating
 from app.modules.dataset.repositories import (
     AuthorRepository,
     DOIMappingRepository,
     DSDownloadRecordRepository,
     DSMetaDataRepository,
     DSViewRecordRepository,
-    DataSetRepository
+    DataSetRepository, 
+    DatasetRatingRepository
 )
 from app.modules.featuremodel.repositories import FMMetaDataRepository, FeatureModelRepository
 from app.modules.hubfile.repositories import (
@@ -48,6 +51,7 @@ class DataSetService(BaseService):
         self.hubfilerepository = HubfileRepository()
         self.dsviewrecord_repostory = DSViewRecordRepository()
         self.hubfileviewrecord_repository = HubfileViewRecordRepository()
+        self.rating_service = RatingService() #AÑADIDO
 
     def move_feature_models(self, dataset: DataSet):
         current_user = AuthenticationService().get_authenticated_user()
@@ -148,6 +152,17 @@ class DataSetService(BaseService):
         unsynchronized_datasets = self.get_unsynchronized(current_user_id)
         return len(unsynchronized_datasets) if unsynchronized_datasets else 0
 
+    #AÑADIDO
+    def get_dataset_with_ratings(self, dataset_id: int):
+        dataset = self.repository.get(dataset_id)
+        if not dataset:
+            return None
+        average_ratings = self.rating_service.get_average_rating(dataset_id)
+        return {
+            "dataset": dataset,
+            "ratings": average_ratings
+        }
+
 
 class AuthorService(BaseService):
     def __init__(self):
@@ -220,4 +235,40 @@ class SizeService():
             return f'{round(size / (1024 ** 2), 2)} MB'
         else:
             return f'{round(size / (1024 ** 3), 2)} GB'
+
+
+#AÑADIDO
+class RatingService(BaseService):
+    def __init__(self):
+        super().__init__(DatasetRatingRepository())
+
+    # def add_rating(self, user_id: int, dataset_id: int, quality: int, size: int, usability: int):
+    #     return self.repository.add_rating(dataset_id=dataset_id, user_id=user_id, quality=quality, size=size, usability=usability)
+
+    # def get_average_rating(self, dataset_id: int):
+    #     try:
+    #         ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+
+    #         if not ratings:
+    #             return None
+
+    #         avg_quality = sum(rating.quality for rating in ratings) / len(ratings)
+    #         avg_size = sum(rating.size for rating in ratings) / len(ratings)
+    #         avg_usability = sum(rating.usability for rating in ratings) / len(ratings)
+
+    #         return {
+    #             "average_quality": avg_quality,
+    #             "average_size": avg_size,
+    #             "average_usability": avg_usability,
+    #             "average_total": (avg_quality + avg_size + avg_usability) / 3,
+    #         }
+    #     except Exception as e:
+    #         logger.exception("Error al obtener calificaciones promedio")
+    #         raise e
+
+    def add_rating(self, user_id: int, dataset_id: int, quality: int, size: int, usability: int):
+        return self.repository.add_rating(dataset_id=dataset_id, user_id=user_id, quality=quality, size=size, usability=usability)
+
+    def get_average_rating(self, dataset_id: int):
+        return self.repository.get_average_rating(dataset_id)
 

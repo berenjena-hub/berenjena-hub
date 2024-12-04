@@ -73,6 +73,13 @@ chico sundermann">
                             class="align-middle">Team</span>
                     </a>
                 </li>
+                {% if not current_user.is_anonymous %}
+                <li class="sidebar-item {{ 'active' if request.endpoint == 'social.index' else '' }}">
+                    <a class="sidebar-link" href="{{ url_for('social.index') }}">
+                        <i class="align-middle" data-feather="message-circle"></i> <span class="align-middle">Chat</span>
+                    </a>                                              
+                </li>
+                {% endif %}
 
                 {% if current_user.is_anonymous %}
 

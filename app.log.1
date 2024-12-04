@@ -1,42 +1,147 @@
-2024-12-03 23:11:27,608 - app.modules.dashboard.tests.test_unit - ERROR - Exception on /dashboard/ [GET]
+2024-11-13 08:48:44,606 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
 Traceback (most recent call last):
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/app/modules/dashboard/routes.py", line 33, in index
-    return render_template(
-           ^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-         ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/sheng/berenjena-hub/app/modules/dashboard/templates/dashboard.html", line 1, in top-level template code
-    {% extends "base_template.html" %}
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/app/templates/base_template.html", line 65, in top-level template code
-    <a class="sidebar-link" href="{{ url_for('explore.index') }}">
-    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/sheng/berenjena-hub/venv/lib/python3.12/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'explore.index'. Did you mean 'public.index' instead?
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 08:52:51,812 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 08:52:51,813 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:08:27,352 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:08:27,354 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:23:17,077 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:23:17,079 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:56:52,640 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:56:52,642 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:59:26,754 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 09:59:26,756 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 10:00:45,278 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 242, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+                               ^^^^^^
+NameError: name 'Rating' is not defined
+2024-11-13 10:00:45,280 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 259, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 242, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+                               ^^^^^^
+NameError: name 'Rating' is not defined
+2024-11-13 10:03:44,553 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 10:03:44,554 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 257, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 240, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+              ^^
+NameError: name 'db' is not defined
+2024-11-13 10:04:49,025 - app.modules.dataset.services - ERROR - Error al obtener calificaciones promedio
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 242, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+                               ^^^^^^
+NameError: name 'Rating' is not defined
+2024-11-13 10:04:49,028 - app.modules.dataset.routes - ERROR - Error al agregar la calificación
+Traceback (most recent call last):
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/routes.py", line 362, in rate
+    avg_ratings = rating_service.get_average_rating(dataset_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 259, in get_average_rating
+    raise e
+  File "/home/david/Escritorio/berenjena-hub/app/modules/dataset/services.py", line 242, in get_average_rating
+    ratings = db.session.query(Rating).filter_by(dataset_id=dataset_id).all()
+                               ^^^^^^
+NameError: name 'Rating' is not defined
