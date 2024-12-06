@@ -51,4 +51,18 @@ def test_delete_file(app):
 
                 assert response.status_code == 200
                 assert response.json == {"message": "File deleted successfully"}
-            
+
+
+def test_delete_file_negative(app):
+    file_name = "test_file.txt"
+
+    with patch('app.modules.dataset.routes.current_user') as mock_user:
+        mock_user.temp_folder = MagicMock(return_value='/mock/temp/folder')
+    
+        with patch('os.path.exists', return_value=False):
+            with app.test_client() as client:
+                response = client.post('/dataset/file/delete', json={"file": file_name})
+
+            assert response.status_code == 200  
+
+            assert response.json == {"error": "Error: File not found"}
