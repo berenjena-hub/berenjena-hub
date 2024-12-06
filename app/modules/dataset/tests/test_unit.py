@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from app.modules.dataset.routes import get_file_content
 from app import create_app
+import os
 
 
 @pytest.fixture
@@ -31,6 +32,23 @@ def test_get_file_content(app):
                 file_id=file_id, 
                 dataset=mock_dataset 
             )
+          
 
+def test_delete_file(app):
+    file_name = "test_file.txt"
 
-        
+    file_path = os.path.join('/mock/temp/folder', file_name)
+
+    with patch('app.modules.dataset.routes.current_user') as mock_user:
+        mock_user.temp_folder = MagicMock(return_value='/mock/temp/folder') 
+
+        with patch('os.path.exists', return_value=True):
+            with patch('os.remove') as mock_remove:
+                with app.test_client() as client:
+                    response = client.post('/dataset/file/delete', json={"file": file_name})
+
+                mock_remove.assert_called_once_with(file_path)
+
+                assert response.status_code == 200
+                assert response.json == {"message": "File deleted successfully"}
+            
