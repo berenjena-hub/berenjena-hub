@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from app.modules.dataset.routes import get_file_content
 from app import create_app
 import os
+from werkzeug.exceptions import NotFound
 
 
 @pytest.fixture
@@ -32,6 +33,23 @@ def test_get_file_content(app):
                 file_id=file_id, 
                 dataset=mock_dataset 
             )
+      
+            
+def test_get_file_content_not_found(app):
+    file_id = 1
+    dataset_id = 999 
+
+    with patch('app.modules.dataset.services.DataSetService.get_or_404') as mock_get_or_404:
+        mock_get_or_404.side_effect = NotFound()
+
+        with patch('app.modules.dataset.routes.render_template') as mock_render_template:
+            with app.app_context():
+                try:
+                    get_file_content(file_id, dataset_id)
+                except NotFound:
+                    pass  
+
+            mock_render_template.assert_not_called()
           
 
 def test_delete_file(app):
@@ -66,3 +84,4 @@ def test_delete_file_negative(app):
             assert response.status_code == 200  
 
             assert response.json == {"error": "Error: File not found"}
+   
