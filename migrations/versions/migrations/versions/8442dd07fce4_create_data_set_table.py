@@ -170,6 +170,34 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('ratings',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('dataset_id', sa.Integer(), nullable=False),
+    sa.Column('quality', sa.Integer(), nullable=False),
+    sa.Column('size', sa.Integer(), nullable=False),
+    sa.Column('usability', sa.Integer(), nullable=False),
+    sa.Column('total_rating', sa.Float(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.func.now()),
+    sa.PrimaryKeyConstraint('id'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['dataset_id'], ['data_set.id'], ondelete='CASCADE')
+    )
+    # op.create_table('models_ratings',
+    # sa.Column('id', sa.Integer(), nullable=False),
+    # sa.Column('user_id', sa.Integer(), nullable=False),
+    # sa.Column('model_id', sa.Integer(), nullable=False),
+    # sa.Column('efficiency', sa.Integer(), nullable=False),
+    # sa.Column('speed', sa.Integer(), nullable=False),
+    # sa.Column('generalization', sa.Integer(), nullable=False),
+    # sa.Column('resource_consumption', sa.Integer(), nullable=False),
+    # sa.Column('total_rating', sa.Float(), nullable=False),
+    # sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.func.now()),
+    # sa.PrimaryKeyConstraint('id'),
+    # sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
+    # sa.ForeignKeyConstraint(['model_id'], ['models.id'], ondelete='CASCADE')
+    #)
+
     # ### end Alembic commands ###
 
 
@@ -192,4 +220,7 @@ def downgrade():
     op.drop_table('fm_metrics')
     op.drop_table('ds_metrics')
     op.drop_table('doi_mapping')
+    op.drop_table('ratings')
+    op.drop_table('models_ratings')
+
     # ### end Alembic commands ###
