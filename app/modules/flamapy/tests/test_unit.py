@@ -15,7 +15,7 @@ def test_client(test_client):
         user = create_user(email="test_user@example.com", password="test1234")
         dataset = create_dataset(user_id=user.id)
         os.makedirs(f"uploads/user_{user.id}/dataset_{dataset.id}", exist_ok=True)
-        with open(f"uploads/user_{user.id}/dataset_{dataset.id}/file100.uvl", "w") as f:
+        with open(f"uploads/user_{user.id}/dataset_{dataset.id}/filetest.uvl", "w") as f:
             f.write('features\n    Chat\n        mandatory\n            Connection\n                alternative\n                    "Peer 2 Peer"\n                    Server\n            Messages\n                or\n                    Text\n                    Video\n                    Audio\n        optional\n            "Data Storage"\n            "Media Player"\n\nconstraints\n    Server => "Data Storage"\n    Video | Audio => "Media Player"\n')
     yield test_client
     with test_client.application.app_context():
@@ -134,6 +134,24 @@ def test_to_cnf(test_client):
         assert response.status_code == 200, "No se realizó la descarga correctamente"
         content_disposition = response.headers.get("Content-Disposition")
         assert "test_hubfile_cnf.txt" in content_disposition, "El formato no es correcto"
+    db.session.delete(hubfile)
+    db.session.delete(dataset)
+    db.session.delete(user)
+    db.session.commit()
+    delete_folder(user, dataset)
+
+
+def test_to_json(test_client):
+    user = create_user(email="test_user_json@example.com", password="test1234")
+    dataset = create_dataset(user_id=user.id)
+    fm = create_feature_model(dataset_id=dataset.id)
+    hubfile = create_hubfile(name="test_hubfile", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
+    os.environ["WORKING_DIR"] = os.getcwd()
+    with test_client.application.test_request_context():
+        response = to_json(file_id=hubfile.id)
+        assert response.status_code == 200, "No se realizó la descarga correctamente"
+        content_disposition = response.headers.get("Content-Disposition")
+        assert "test_hubfile_json.txt" in content_disposition, "El formato no es correcto"
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
