@@ -101,6 +101,7 @@ def test_to_glencoe(test_client):
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
+    db.session.delete(fm)
     db.session.commit()
     delete_folder(user, dataset)
 
@@ -119,6 +120,7 @@ def test_to_splot(test_client):
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
+    db.session.delete(fm)
     db.session.commit()
     delete_folder(user, dataset)
 
@@ -137,6 +139,7 @@ def test_to_cnf(test_client):
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
+    db.session.delete(fm)
     db.session.commit()
     delete_folder(user, dataset)
 
@@ -155,5 +158,25 @@ def test_to_json(test_client):
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
+    db.session.delete(fm)
+    db.session.commit()
+    delete_folder(user, dataset)
+
+
+def test_to_afm(test_client):
+    user = create_user(email="test_user_afm@example.com", password="test1234")
+    dataset = create_dataset(user_id=user.id)
+    fm = create_feature_model(dataset_id=dataset.id)
+    hubfile = create_hubfile(name="test_hubfile", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
+    os.environ["WORKING_DIR"] = os.getcwd()
+    with test_client.application.test_request_context():
+        response = to_afm(file_id=hubfile.id)
+        assert response.status_code == 200, "No se realizó la descarga correctamente"
+        content_disposition = response.headers.get("Content-Disposition")
+        assert "test_hubfile_afm.txt" in content_disposition, "El formato no es correcto"
+    db.session.delete(hubfile)
+    db.session.delete(dataset)
+    db.session.delete(user)
+    db.session.delete(fm)
     db.session.commit()
     delete_folder(user, dataset)
