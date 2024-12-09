@@ -2,7 +2,7 @@ import pytest
 import os
 import shutil
 from app import db
-from app.modules.flamapy.routes import to_glencoe, to_splot, to_cnf, to_afm, to_json
+from app.modules.flamapy.routes import to_glencoe, to_splot, to_cnf, to_json, to_afm
 from app.modules.auth.models import User
 from app.modules.featuremodel.models import FeatureModel
 from app.modules.hubfile.models import Hubfile
@@ -88,16 +88,34 @@ def delete_folder(user, dataset):
 
 
 def test_to_glencoe(test_client):
-    user = create_user(email="test_user_glencoe@example.com", password="password123")
+    user = create_user(email="test_user_glencoe@example.com", password="test1234")
     dataset = create_dataset(user_id=user.id)
     fm = create_feature_model(dataset_id=dataset.id)
-    hubfile = create_hubfile(name="mock_dataset", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
+    hubfile = create_hubfile(name="test_hubfile", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
     os.environ["WORKING_DIR"] = os.getcwd()
     with test_client.application.test_request_context():
         response = to_glencoe(file_id=hubfile.id)
-        assert response.status_code == 200, "La respuesta no fue exitosa"
+        assert response.status_code == 200, "No se realizó la descarga correctamente"
         content_disposition = response.headers.get("Content-Disposition")
-        assert "mock_dataset_glencoe.txt" in content_disposition, "El nombre del archivo en la respuesta no es correcto"
+        assert "test_hubfile_glencoe.txt" in content_disposition, "El formato no es correcto"
+    db.session.delete(hubfile)
+    db.session.delete(dataset)
+    db.session.delete(user)
+    db.session.commit()
+    delete_folder(user, dataset)
+
+
+def test_to_splot(test_client):
+    user = create_user(email="test_user_splot@example.com", password="test1234")
+    dataset = create_dataset(user_id=user.id)
+    fm = create_feature_model(dataset_id=dataset.id)
+    hubfile = create_hubfile(name="test_hubfile", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
+    os.environ["WORKING_DIR"] = os.getcwd()
+    with test_client.application.test_request_context():
+        response = to_splot(file_id=hubfile.id)
+        assert response.status_code == 200, "No se realizó la descarga correctamente"
+        content_disposition = response.headers.get("Content-Disposition")
+        assert "test_hubfile_splot.txt" in content_disposition, "El formato no es correcto"
     db.session.delete(hubfile)
     db.session.delete(dataset)
     db.session.delete(user)
