@@ -1,43 +1,105 @@
 import pytest
-from flask import Flask
-from unittest.mock import patch, MagicMock, mock_open
-from app.modules.flamapy.routes import flamapy_bp
+import os
+import shutil
+from app import db
+from app.modules.flamapy.routes import to_glencoe, to_splot, to_cnf, to_afm, to_json
+from app.modules.auth.models import User
+from app.modules.featuremodel.models import FeatureModel
+from app.modules.hubfile.models import Hubfile
+from app.modules.dataset.models import DSMetaData, PublicationType, DataSet
 
 
-# TEST DE GLENCOE
-@pytest.fixture
-def client():
-    app = Flask(__name__)
-    app.register_blueprint(flamapy_bp)  # Registra el blueprint con las rutas
-    with app.test_client() as client:
-        yield client
+@pytest.fixture(scope="module")
+def test_client(test_client):
+    with test_client.application.app_context():
+        user = create_user(email="test_user@example.com", password="test1234")
+        dataset = create_dataset(user_id=user.id)
+        os.makedirs(f"uploads/user_{user.id}/dataset_{dataset.id}", exist_ok=True)
+        with open(f"uploads/user_{user.id}/dataset_{dataset.id}/file100.uvl", "w") as f:
+            f.write('features\n    Chat\n        mandatory\n            Connection\n                alternative\n                    "Peer 2 Peer"\n                    Server\n            Messages\n                or\n                    Text\n                    Video\n                    Audio\n        optional\n            "Data Storage"\n            "Media Player"\n\nconstraints\n    Server => "Data Storage"\n    Video | Audio => "Media Player"\n')
+    yield test_client
+    with test_client.application.app_context():
+        db.session.delete(dataset)
+        db.session.delete(user)
+        db.session.commit()
+        shutil.rmtree(f"uploads/user_{user.id}/dataset_{dataset.id}", ignore_errors=True)
 
 
-@patch('app.modules.hubfile.services.HubfileService.get_or_404')
-@patch('os.path.isfile')
-@patch('flamapy.metamodels.fm_metamodel.transformations.UVLReader')
-@patch('flamapy.metamodels.fm_metamodel.transformations.GlencoeWriter')
-def test_to_glencoe_success(mock_glencoe_writer, mock_uvl_reader, mock_isfile, mock_get_or_404, client):
-    # Simula que el archivo existe
-    mock_isfile.return_value = True
+def create_user(email, password):
+    user = User(email=email, password=password)
+    db.session.add(user)
+    db.session.commit()
+    return user
 
-    # Mock del HubfileService para devolver un archivo simulado
-    mock_hubfile = MagicMock()
-    mock_hubfile.name = "file10.uvl"
-    mock_hubfile.get_path.return_value = "/mock/path/to/file10.uvl"
-    mock_get_or_404.return_value = mock_hubfile
 
-    # Mock de UVLReader y GlencoeWriter
-    mock_uvl_reader.return_value.transform.return_value = "mocked_feature_model"
-    mock_glencoe_writer.return_value.transform.return_value = None
-    
-    # Simula un parse tree válido para UVLReader
-    mock_uvl_reader.return_value.parse_tree = MagicMock()
-    mock_uvl_reader.return_value.parse_tree.features.return_value.feature.return_value = "mocked_feature"
+def create_dataset(user_id):
+    ds_meta_data = DSMetaData(title="Test Dataset", description="Test dataset description", publication_type=PublicationType.JOURNAL_ARTICLE)
+    db.session.add(ds_meta_data)
+    db.session.commit()
+    dataset = DataSet(user_id=user_id, ds_meta_data_id=ds_meta_data.id)
+    db.session.add(dataset)
+    db.session.commit()
+    return dataset
 
-    # Simula la apertura del archivo y su lectura con bytes en vez de str
-    with patch("builtins.open", mock_open(read_data=b"namespace example;")):
-        response = client.get('/flamapy/to_glencoe/10')
 
-    # Asegura que la respuesta sea correcta
-    assert response.status_code == 200
+def create_feature_model(dataset_id):
+    feature_model = FeatureModel(data_set_id=dataset_id)
+    db.session.add(feature_model)
+    db.session.commit()
+    return feature_model
+
+
+def create_hubfile(name, feature_model_id, user_id, dataset_id):
+    file_path = f"uploads/user_{user_id}/dataset_{dataset_id}/{name}"
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "w") as f:
+        f.write(
+            "features\n"
+            "    Chat\n"
+            "        mandatory\n"
+            "            Connection\n"
+            "                alternative\n"
+            '                    "Peer 2 Peer"\n'
+            "                    Server\n"
+            "            Messages\n"
+            "                or\n"
+            "                    Text\n"
+            "                    Video\n"
+            "                    Audio\n"
+            "        optional\n"
+            '            "Data Storage"\n'
+            '            "Media Player"\n'
+            "\n"
+            "constraints\n"
+            '    Server => "Data Storage"\n'
+            '    Video | Audio => "Media Player"\n'
+        )
+    hubfile = Hubfile(name=name, checksum="123456", size=100, feature_model_id=feature_model_id)
+    db.session.add(hubfile)
+    db.session.commit()
+    return hubfile
+
+
+def delete_folder(user, dataset):
+    if user.id != 2 or user.id != 1:
+        shutil.rmtree(f"uploads/user_{user.id}", ignore_errors=True)
+    else:
+        shutil.rmtree(f"uploads/user_{user.id}/dataset_{dataset.id}", ignore_errors=True)
+
+
+def test_to_glencoe(test_client):
+    user = create_user(email="test_user_glencoe@example.com", password="password123")
+    dataset = create_dataset(user_id=user.id)
+    fm = create_feature_model(dataset_id=dataset.id)
+    hubfile = create_hubfile(name="mock_dataset", feature_model_id=fm.id, user_id=user.id, dataset_id=dataset.id)
+    os.environ["WORKING_DIR"] = os.getcwd()
+    with test_client.application.test_request_context():
+        response = to_glencoe(file_id=hubfile.id)
+        assert response.status_code == 200, "La respuesta no fue exitosa"
+        content_disposition = response.headers.get("Content-Disposition")
+        assert "mock_dataset_glencoe.txt" in content_disposition, "El nombre del archivo en la respuesta no es correcto"
+    db.session.delete(hubfile)
+    db.session.delete(dataset)
+    db.session.delete(user)
+    db.session.commit()
+    delete_folder(user, dataset)
