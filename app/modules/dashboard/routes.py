@@ -26,9 +26,13 @@ def index():
 
     # Contar dinámicamente el número de equipos
     team_template_path = os.path.join(current_app.root_path, 'modules/team/templates/team/index.html')
-    with open(team_template_path, 'r') as f:
-        soup = BeautifulSoup(f, 'html.parser')
-        total_teams = len(soup.find_all('div', class_='card h-100'))
+    try:
+        with open(team_template_path, 'r') as f:
+            soup = BeautifulSoup(f, 'html.parser')
+            total_teams = len(soup.select('div.card.h-100'))
+    except Exception:
+        # Manejar la excepción asignando 0 si no se puede leer el archivo
+        total_teams = 0
 
     return render_template(
         'dashboard.html',
@@ -42,3 +46,4 @@ def index():
         total_feature_model_views=total_feature_model_views,
         total_teams=total_teams
     )
+

@@ -18,6 +18,5 @@ class DataSetService(BaseService):
         self.dsviewrecord_repostory = DSViewRecordRepository()
         self.hubfileviewrecord_repository = HubfileViewRecordRepository()
 
-    # Agregar este método
     def count_unsynchronized_datasets(self):
         return self.repository.count_unsynchronized_datasets()
