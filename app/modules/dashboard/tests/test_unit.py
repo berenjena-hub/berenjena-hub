@@ -47,7 +47,6 @@ def test_index_route_unauthenticated_user(app_client, mock_current_user_unauthen
     mock_dataset_service.count_unsynchronized_datasets.return_value = 5
     mock_dataset_service.total_dataset_downloads.return_value = 20
     mock_dataset_service.total_dataset_views.return_value = 30
-    # get_synchronized no debería importar, ya que user_datasets_count = 0 cuando no autenticado
     mock_dataset_service.get_synchronized.return_value = [1, 2, 3]
     mock_feature_model_service.count_feature_models.return_value = 7
     mock_feature_model_service.total_feature_model_downloads.return_value = 15
@@ -144,7 +143,6 @@ def test_index_route_no_teams(app_client, mock_current_user_authenticated):
         response = app_client.get('/dashboard/')
         assert response.status_code == 200
 
-        # total_teams debería ser 0 ya que no hay 'div.card.h-100'
         mock_render_template.assert_called_once_with(
             'dashboard.html',
             total_datasets=10,
@@ -268,12 +266,6 @@ def test_index_route_mixed_html_teams(app_client, mock_current_user_authenticate
         response = app_client.get('/dashboard/')
         assert response.status_code == 200
 
-        # Solo deberían contarse los div con clase 'card h-100', incluso si tienen otras clases.
-        # En este caso: 
-        #   1) <div class="card h-100"></div>
-        #   2) <div class="card h-100"></div>
-        #   3) <div class="card h-100 extra-class"></div>
-        # Total: 3 tarjetas h-100
         mock_render_template.assert_called_once_with(
             'dashboard.html',
             total_datasets=5,

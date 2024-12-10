@@ -14,8 +14,7 @@ def index():
 
     # Obtener estadísticas generales
     total_datasets = dataset_service.count_synchronized_datasets()
-
-    # Verificar si el usuario está autenticado antes de acceder a su id
+    
     if current_user.is_authenticated:
         total_unsynchronized_datasets = dataset_service.count_unsynchronized_datasets(current_user.id)
         user_datasets_count = len(dataset_service.get_synchronized(current_user.id))
