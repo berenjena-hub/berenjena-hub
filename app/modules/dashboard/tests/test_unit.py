@@ -48,7 +48,6 @@ def test_index_route_unauthenticated_user(app_client, mock_current_user_unauthen
     mock_dataset_service.count_unsynchronized_datasets.return_value = 5
     mock_dataset_service.total_dataset_downloads.return_value = 20
     mock_dataset_service.total_dataset_views.return_value = 30
-    # get_synchronized no debería importar, ya que user_datasets_count = 0 cuando no autenticado
     mock_dataset_service.get_synchronized.return_value = [1, 2, 3]
     mock_feature_model_service.count_feature_models.return_value = 7
     mock_feature_model_service.total_feature_model_downloads.return_value = 15
