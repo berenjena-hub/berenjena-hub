@@ -14,15 +14,20 @@ def index():
 
     # Obtener estadísticas generales
     total_datasets = dataset_service.count_synchronized_datasets()
-    total_unsynchronized_datasets = dataset_service.count_unsynchronized_datasets(current_user.id)
+
+    # Verificar si el usuario está autenticado antes de acceder a su id
+    if current_user.is_authenticated:
+        total_unsynchronized_datasets = dataset_service.count_unsynchronized_datasets(current_user.id)
+        user_datasets_count = len(dataset_service.get_synchronized(current_user.id))
+    else:
+        total_unsynchronized_datasets = 0
+        user_datasets_count = 0
+
     total_feature_models = feature_model_service.count_feature_models()
     total_dataset_downloads = dataset_service.total_dataset_downloads()
     total_feature_model_downloads = feature_model_service.total_feature_model_downloads()
     total_dataset_views = dataset_service.total_dataset_views()
     total_feature_model_views = feature_model_service.total_feature_model_views()
-
-    # Obtener estadísticas específicas del usuario actual
-    user_datasets_count = len(dataset_service.get_synchronized(current_user.id)) if current_user.is_authenticated else 0
 
     # Contar dinámicamente el número de equipos
     team_template_path = os.path.join(current_app.root_path, 'modules/team/templates/team/index.html')
@@ -31,7 +36,6 @@ def index():
             soup = BeautifulSoup(f, 'html.parser')
             total_teams = len(soup.select('div.card.h-100'))
     except Exception:
-        # Manejar la excepción asignando 0 si no se puede leer el archivo
         total_teams = 0
 
     return render_template(
@@ -46,4 +50,5 @@ def index():
         total_feature_model_views=total_feature_model_views,
         total_teams=total_teams
     )
+
 
