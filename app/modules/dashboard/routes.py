@@ -51,3 +51,4 @@ def index():
         total_teams=total_teams
     )
 
+
