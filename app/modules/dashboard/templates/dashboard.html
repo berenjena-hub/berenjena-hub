@@ -1,8 +1,8 @@
 {% extends "base_template.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4 text-center">Dashboard</h1>
+<div class="container mt-5 dashboard-container">
+    <h1 id="dashboard-title" class="mb-4 text-center">Dashboard</h1>
     <p class="text-muted mb-4 text-center">An overview of your datasets and repository statistics.</p>
 
     <div class="row g-4 justify-content-center">
@@ -14,7 +14,7 @@
                         <i class="fas fa-user fa-3x text-primary"></i>
                     </div>
                     <h5 class="card-title">My Datasets</h5>
-                    <p class="display-5 fw-bold text-primary">{{ user_datasets_count }}</p>
+                    <p id="user-datasets-count" class="display-5 fw-bold text-primary">{{ user_datasets_count }}</p>
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                         <i class="fas fa-layer-group fa-3x text-info"></i>
                     </div>
                     <h5 class="card-title">Feature Models</h5>
-                    <p class="display-5 fw-bold text-info">{{ total_feature_models }}</p>
+                    <p id="feature-models-count" class="display-5 fw-bold text-info">{{ total_feature_models }}</p>
                 </div>
             </div>
         </div>
@@ -109,6 +109,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row g-4 justify-content-center">
             <!-- Tarjeta: Total Teams -->
             <div class="col-lg-3 col-md-6">
@@ -123,7 +124,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>
 {% endblock %}
