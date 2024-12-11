@@ -19,6 +19,7 @@ def index():
         total_unsynchronized_datasets = dataset_service.count_unsynchronized_datasets(current_user.id)
         user_datasets_count = len(dataset_service.get_synchronized(current_user.id))
     else:
+        # Si no está autenticado, establecemos estos valores en 0
         total_unsynchronized_datasets = 0
         user_datasets_count = 0
 
@@ -49,5 +50,3 @@ def index():
         total_feature_model_views=total_feature_model_views,
         total_teams=total_teams
     )
-
-
