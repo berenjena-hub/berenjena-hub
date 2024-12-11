@@ -11,7 +11,7 @@ from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision = '9c9c1d6260de'
-down_revision = '001'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -31,7 +31,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.drop_table('webhook')
+    ## op.drop_table('webhook')
     # ### end Alembic commands ###
 
 
