@@ -46,7 +46,8 @@ jobs:
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
-          rm -f THIRD_PARTY_NOTICES.chromedriver
+        env:
+          CHROMEWEBDRIVER: /usr/local/bin
 
       - name: Run Selenium Tests
         id: selenium-tests
