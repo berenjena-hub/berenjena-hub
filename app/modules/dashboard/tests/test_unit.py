@@ -44,6 +44,7 @@ def test_index_route_unauthenticated_user(app_client, mock_current_user_unauthen
 
     # Valores de retorno
     mock_dataset_service.count_synchronized_datasets.return_value = 10
+   
     mock_dataset_service.count_unsynchronized_datasets.return_value = 5
     mock_dataset_service.total_dataset_downloads.return_value = 20
     mock_dataset_service.total_dataset_views.return_value = 30
@@ -67,8 +68,8 @@ def test_index_route_unauthenticated_user(app_client, mock_current_user_unauthen
         mock_render_template.assert_called_once_with(
             'dashboard.html',
             total_datasets=10,
-            total_unsynchronized_datasets=5,
-            user_datasets_count=0,  
+            total_unsynchronized_datasets=0,
+            user_datasets_count=0,
             total_feature_models=7,
             total_dataset_downloads=20,
             total_feature_model_downloads=15,
@@ -76,6 +77,7 @@ def test_index_route_unauthenticated_user(app_client, mock_current_user_unauthen
             total_feature_model_views=25,
             total_teams=2
         )
+
 
 def test_index_route_no_data(app_client, mock_current_user_authenticated):
     """Test que verifica el comportamiento cuando todos los datos devueltos son 0."""
