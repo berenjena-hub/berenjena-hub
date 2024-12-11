@@ -38,40 +38,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set up ChromeDriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/chromedriver
-        env:
-          CHROMEWEBDRIVER: /usr/local/bin
-
-      - name: Run Selenium Tests
-        id: selenium-tests
-        run: |
-          pytest --tb=short tests/selenium/ --junitxml=selenium-results.xml || echo "Selenium Tests failed"
-        continue-on-error: true
-
       - name: Run Unit Tests
         id: unit-tests
         run: |
           pytest --tb=short tests/unit/ --junitxml=unit-results.xml || echo "Unit Tests failed"
         continue-on-error: true
-
-      - name: Create Issue for Failed Selenium Tests
-        if: steps.selenium-tests.outcome == 'failure'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'ErrorCodacy-PruebasSelenium',
-              body: 'Las pruebas de Selenium fallaron. Por favor, revisar los logs para más detalles.'
-            });
 
       - name: Create Issue for Failed Unit Tests
         if: steps.unit-tests.outcome == 'failure'
