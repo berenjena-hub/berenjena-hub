@@ -43,9 +43,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget unzip
           wget https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip -d /usr/local/bin/
-          chmod +x /usr/local/bin/chromedriver
-          rm -f /usr/local/bin/chromedriver-linux64/THIRD_PARTY_NOTICES.chromedriver
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+          rm -f THIRD_PARTY_NOTICES.chromedriver
 
       - name: Run Selenium Tests
         id: selenium-tests
@@ -67,7 +68,7 @@ jobs:
             github.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'ErrorRender-PruebasSelenium',
+              title: 'ErrorCodacy-PruebasSelenium',
               body: 'Las pruebas de Selenium fallaron. Por favor, revisar los logs para más detalles.'
             });
 
@@ -79,7 +80,7 @@ jobs:
             github.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'ErrorRender-PruebasUnitarias',
+              title: 'ErrorCodacy-PruebasUnitarias',
               body: 'Las pruebas unitarias fallaron. Por favor, revisar los logs para más detalles.'
             });
 
