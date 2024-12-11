@@ -50,5 +50,3 @@ def index():
         total_feature_model_views=total_feature_model_views,
         total_teams=total_teams
     )
-
-
