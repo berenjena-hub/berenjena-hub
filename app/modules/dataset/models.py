@@ -167,18 +167,18 @@ class DOIMapping(db.Model):
     dataset_doi_old = db.Column(db.String(120))
     dataset_doi_new = db.Column(db.String(120))
 
-#AÑADIDO
+
+# AÑADIDO
 class Rating(db.Model):
     __tablename__ = 'ratings'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    dataset_id = Column(Integer, ForeignKey('data_set.id', ondelete='CASCADE'), nullable=False)
-    quality = Column(Integer, nullable=False)
-    size = Column(Integer, nullable=False)
-    usability = Column(Integer, nullable=False)
-    total_rating = Column(Float, nullable=False)
-    created_at = Column(DateTime, default=func.now(), nullable=False)
-
+    id = db.Column(Integer, primary_key=True)
+    user_id = db.Column(Integer, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    dataset_id = db.Column(Integer, ForeignKey('data_set.id', ondelete='CASCADE'), nullable=False)
+    quality = db.Column(Integer, nullable=False)
+    size = db.Column(Integer, nullable=False)
+    usability = db.Column(Integer, nullable=False)
+    total_rating = db.Column(Float, nullable=False)
+    created_at = db.Column(DateTime, default=func.now(), nullable=False)
 
     # def __init__(self, user_id, dataset_id, quality, size, usability, total_rating, created_at):
     #     self.user_id = user_id
@@ -188,4 +188,3 @@ class Rating(db.Model):
     #     self.usability = usability
     #     self.total_rating = total_rating
     #     self.created_at = created_at
-    
