@@ -62,7 +62,7 @@ class DataSetSeeder(BaseSeeder):
         # Create DataSet instances with static creation dates
         datasets = [
             DataSet(
-                user_id=user1.id if i % 2 == 0 else user2.id,
+                user_id=random.choice([user1.id, user2.id]),
                 ds_meta_data_id=seeded_ds_meta_data[i].id,
                 created_at=datetime.now(timezone.utc) - timedelta(days=i * 30)
             ) for i in range(6)
