@@ -38,6 +38,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Set up ChromeDriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip -d /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
+          rm -f /usr/local/bin/chromedriver-linux64/THIRD_PARTY_NOTICES.chromedriver
+
       - name: Run Selenium Tests
         id: selenium-tests
         run: |
@@ -58,7 +67,7 @@ jobs:
             github.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'ErrorCodacy-PruebasSelenium',
+              title: 'ErrorRender-PruebasSelenium',
               body: 'Las pruebas de Selenium fallaron. Por favor, revisar los logs para más detalles.'
             });
 
@@ -70,7 +79,7 @@ jobs:
             github.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: 'ErrorCodacy-PruebasUnitarias',
+              title: 'ErrorRender-PruebasUnitarias',
               body: 'Las pruebas unitarias fallaron. Por favor, revisar los logs para más detalles.'
             });
 
