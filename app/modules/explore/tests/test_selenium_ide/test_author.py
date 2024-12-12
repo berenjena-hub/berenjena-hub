@@ -5,38 +5,34 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from core.environment.host import get_host_for_selenium_testing
+from core.selenium.common import initialize_driver
+
 
 class TestTestauthor():
   def setup_method(self, method):
-    self.driver = webdriver.Chrome()
+    self.driver = initialize_driver()
     self.vars = {}
   
   def teardown_method(self, method):
     self.driver.quit()
   
   def test_testauthor(self):
-    self.driver.get("http://127.0.0.1:5000/")
-    self.driver.set_window_size(1854, 1011)
+    self.driver.get(get_host_for_selenium_testing())
+    self.driver.maximize_window()
+    time.sleep(2)
     self.driver.find_element(By.CSS_SELECTOR, ".sidebar-item:nth-child(3) .align-middle:nth-child(2)").click()
-    dropdown = self.driver.find_element(By.ID, "authors")
-    dropdown.find_element(By.XPATH, "//option[. = 'Author 1']").click()
-    element = self.driver.find_element(By.ID, "authors")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).click_and_hold().perform()
-    element = self.driver.find_element(By.ID, "authors")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).perform()
-    element = self.driver.find_element(By.ID, "authors")
-    actions = ActionChains(self.driver)
-    actions.move_to_element(element).release().perform()
+    time.sleep(2)
+    self.driver.find_element(By.CSS_SELECTOR, "#authors > option:nth-child(2)").click()
+    time.sleep(2)
+    self.driver.get_screenshot_as_png()
+    time.sleep(7)
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 1").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(2)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 7']").click()
+    time.sleep(2)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -49,7 +45,9 @@ class TestTestauthor():
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 1").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 2']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -62,7 +60,9 @@ class TestTestauthor():
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 2").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 8']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -75,7 +75,9 @@ class TestTestauthor():
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 2").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 3']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -88,7 +90,9 @@ class TestTestauthor():
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 3").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 4']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -98,10 +102,15 @@ class TestTestauthor():
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).release().perform()
+    self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight / 4)")
+
+    time.sleep(1)
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 5']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -111,10 +120,14 @@ class TestTestauthor():
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).release().perform()
+    self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    time.sleep(1)
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 5").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 6']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -124,10 +137,14 @@ class TestTestauthor():
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).release().perform()
+    self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+    time.sleep(1)
     self.driver.find_element(By.LINK_TEXT, "Sample dataset 6").click()
     self.driver.find_element(By.ID, "search").click()
     dropdown = self.driver.find_element(By.ID, "authors")
+    time.sleep(1)
     dropdown.find_element(By.XPATH, "//option[. = 'Author 7']").click()
+    time.sleep(1)
     element = self.driver.find_element(By.ID, "authors")
     actions = ActionChains(self.driver)
     actions.move_to_element(element).click_and_hold().perform()
@@ -143,5 +160,5 @@ class TestTestauthor():
     actions.move_to_element(element).perform()
     element = self.driver.find_element(By.CSS_SELECTOR, "body")
     actions = ActionChains(self.driver)
-    actions.move_to_element(element, 0, 0).perform()
+    actions.move_to_element(element).perform()
   
