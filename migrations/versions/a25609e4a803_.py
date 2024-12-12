@@ -1,8 +1,8 @@
-"""Create data_set table
+"""empty message
 
-Revision ID: 8442dd07fce4
+Revision ID: 001
 Revises: 
-Create Date: 2024-11-11 01:21:06.048151
+Create Date: 2024-12-12 11:54:17.633698
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8442dd07fce4'
+revision = '001'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -44,6 +44,10 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('webhook',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('zenodo',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -72,14 +76,6 @@ def upgrade():
     sa.Column('uvl_version', sa.String(length=120), nullable=True),
     sa.Column('fm_metrics_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['fm_metrics_id'], ['fm_metrics.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('notepad',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=False),
-    sa.Column('body', sa.Text(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_profile',
@@ -170,6 +166,44 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('follow',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('follower_id', sa.Integer(), nullable=False),
+    sa.Column('followed_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['follower_id'], ['user.id']),
+    sa.ForeignKeyConstraint(['followed_id'], ['user.id']),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('social',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('text', sa.String(length=266), nullable=False),
+    sa.Column('comment', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('follower_id', sa.Integer(), nullable=False),
+    sa.Column('followed_id', sa.Integer(), nullable=False),
+    sa.Column('dataset_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['follower_id'], ['user.id']),
+    sa.ForeignKeyConstraint(['followed_id'], ['user.id']),
+    sa.ForeignKeyConstraint(['dataset_id'], ['data_set.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('dashboard',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('ratings',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('quality', sa.Integer(), nullable=False),
+    sa.Column('size', sa.Integer(), nullable=False),
+    sa.Column('usability', sa.Integer(), nullable=False),
+    sa.Column('total_rating', sa.Float(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('dataset_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id']),
+    sa.ForeignKeyConstraint(['dataset_id'], ['data_set.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     # ### end Alembic commands ###
 
 
@@ -184,12 +218,16 @@ def downgrade():
     op.drop_table('data_set')
     op.drop_table('author')
     op.drop_table('user_profile')
-    op.drop_table('notepad')
     op.drop_table('fm_meta_data')
     op.drop_table('ds_meta_data')
     op.drop_table('zenodo')
+    op.drop_table('webhook')
     op.drop_table('user')
     op.drop_table('fm_metrics')
     op.drop_table('ds_metrics')
     op.drop_table('doi_mapping')
+    op.drop_table('follow')
+    op.drop_table('social')
+    op.drop_table('dashboard')
+    op.drop_table('ratings')
     # ### end Alembic commands ###

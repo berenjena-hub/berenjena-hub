@@ -16,6 +16,8 @@ function send_query() {
         filter.addEventListener('input', () => {
             const csrfToken = document.getElementById('csrf_token').value;
 
+            
+
             const searchCriteria = {
                 csrf_token: csrfToken,
                 query: document.querySelector('#query').value,
@@ -24,15 +26,18 @@ function send_query() {
                 size: document.querySelector('#size').value, 
                 author: document.querySelector('#authors').value, 
                 files: document.querySelector('#files').value,
-                title: document.querySelector('#title').value
+                title: document.querySelector('#title').value,
+                tag: document.querySelector('#tag').value
+
             };
 
             console.log(document.querySelector('#publication_type').value);
             console.log(document.querySelector('#size').value);
             console.log(document.querySelector('#files').value);
             console.log(document.querySelector('#title').value);
+            console.log(document.querySelector('#tag').value);
             
-
+            
 
             fetch('/explore', {
                 method: 'POST',
@@ -50,8 +55,8 @@ function send_query() {
                 
                 populateAuthorsFilter(data);
                 populateTitleFilter(data);
+                populateTagFilter(data);
 
-                
                 const filteredData = data.filter(dataset => {
                     const size = dataset.total_size_in_bytes;
                     const authorMatches = searchCriteria.author === "any" || dataset.authors.some(author => author.name === searchCriteria.author);
@@ -61,6 +66,9 @@ function send_query() {
                         ? dataset.title.some(title => title === searchCriteria.title) 
                         : dataset.title === searchCriteria.title);
                     const files = dataset.files_count;
+                    const tagMatches = 
+                    searchCriteria.tag === "any" || 
+                    (Array.isArray(dataset.tags) && dataset.tags.includes(searchCriteria.tag));
 
                     let sizeMatches = true;
                     switch (searchCriteria.size) {
@@ -126,7 +134,7 @@ function send_query() {
                             break;
                     }
                     
-                    return sizeMatches && authorMatches && filesMatches && titleMatches;
+                    return sizeMatches && authorMatches && filesMatches && titleMatches && tagMatches;
                 });
 
                 // results counter
@@ -134,12 +142,16 @@ function send_query() {
                 const resultText = resultCount === 1 ? 'dataset' : 'datasets';
                 document.getElementById('results_number').textContent = `${resultCount} ${resultText} found`;
 
+
+
                 if (resultCount === 0) {
                     console.log("show not found icon");
                     document.getElementById("results_not_found").style.display = "block";
                 } else {
                     document.getElementById("results_not_found").style.display = "none";
                 }
+
+                
 
                 filteredData.forEach(dataset => {
                     let card = document.createElement('div');
@@ -254,6 +266,33 @@ function populateTitleFilter(data) {
     }
 }
 
+function populateTagFilter(data) {
+    const tagSet = new Set();
+    data.forEach(dataset => {
+        if (Array.isArray(dataset.tags)) {
+            dataset.tags.forEach(tag => tagSet.add(tag));
+        }
+    });
+
+    console.log(tagSet);
+    const tagSelect = document.getElementById('tag');
+    const currentTag = tagSelect.value;
+    tagSelect.innerHTML = '<option value="any">Any</option>';
+
+    tagSet.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag;
+        option.textContent = tag;
+        tagSelect.appendChild(option);
+    });
+
+    if (tagSet.has(currentTag)) {
+        tagSelect.value = currentTag;
+    }
+}
+
+
+
 
 function formatDate(dateString) {
     const options = {day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'};
@@ -288,23 +327,41 @@ function clearFilters() {
     // Reset the search query
     let queryInput = document.querySelector('#query');
     queryInput.value = "";
-    // queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 
     // Reset the publication type to its default value
     let publicationTypeSelect = document.querySelector('#publication_type');
-    publicationTypeSelect.value = "any"; // replace "any" with whatever your default value is
-    // publicationTypeSelect.dispatchEvent(new Event('input', {bubbles: true}));
+    publicationTypeSelect.value = "any";
 
     // Reset the sorting option
     let sortingOptions = document.querySelectorAll('[name="sorting"]');
     sortingOptions.forEach(option => {
-        option.checked = option.value == "newest"; // replace "default" with whatever your default value is
-        // option.dispatchEvent(new Event('input', {bubbles: true}));
+        option.checked = option.value == "newest"; // replace "newest" with your default sorting option
     });
+
+    // Reset the size filter
+    let sizeSelect = document.querySelector('#size');
+    sizeSelect.value = "any"; // replace "any" with your default value
+
+    // Reset the authors filter
+    let authorsSelect = document.querySelector('#authors');
+    authorsSelect.value = "any"; // replace "any" with your default value
+
+    // Reset the files filter
+    let filesSelect = document.querySelector('#files');
+    filesSelect.value = "any"; // replace "any" with your default value
+
+    // Reset the title filter
+    let titleSelect = document.querySelector('#title');
+    titleSelect.value = "any"; // replace "any" with your default value
+
+    // Reset the tag filter
+    let tagSelect = document.querySelector('#tag');
+    tagSelect.value = "any"; // replace "any" with your default value
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
 

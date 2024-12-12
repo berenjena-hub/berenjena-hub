@@ -10,9 +10,8 @@ from app.modules.dataset.models import (
     PublicationType,
     DSMetrics,
     Author)
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
-
 
 class DataSetSeeder(BaseSeeder):
 
@@ -26,66 +25,69 @@ class DataSetSeeder(BaseSeeder):
         if not user1 or not user2:
             raise Exception("Users not found. Please seed users first.")
 
-        # Create DSMetrics instance
-        ds_metrics = DSMetrics(number_of_models='5', number_of_features='50')
-        seeded_ds_metrics = self.seed([ds_metrics])[0]
+        # Create DSMetrics instances with static data
+        ds_metrics_list = [
+            DSMetrics(number_of_models="5", number_of_features="50"),
+            DSMetrics(number_of_models="7", number_of_features="75"),
+            DSMetrics(number_of_models="10", number_of_features="100")
+        ]
+        seeded_ds_metrics = self.seed(ds_metrics_list)
 
-        # Create DSMetaData instances
+        # Create DSMetaData instances with static details
         ds_meta_data_list = [
             DSMetaData(
-                deposition_id=1 + i,
+                deposition_id=100 + i,
                 title=f'Sample dataset {i+1}',
-                description=f'Description for dataset {i+1}',
-                publication_type=PublicationType.DATA_MANAGEMENT_PLAN,
-                publication_doi=f'10.1234/dataset{i+1}',
-                dataset_doi=f'10.1234/dataset{i+1}',
-                tags='tag1, tag2',
-                ds_metrics_id=seeded_ds_metrics.id
-            ) for i in range(4)
+                description=f'Detailed description for dataset {i+1} with unique insights.',
+                publication_type=PublicationType.JOURNAL_ARTICLE,
+                publication_doi=f'10.5678/dataset{i+1}',
+                dataset_doi=f'10.5678/dataset{i+1}',
+                tags=', '.join(["analytics", "AI"] if i % 2 == 0 else ["data", "research"]),
+                ds_metrics_id=seeded_ds_metrics[i % len(seeded_ds_metrics)].id
+            ) for i in range(6)
         ]
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
-        # Create Author instances and associate with DSMetaData
+        # Create Author instances with static data
         authors = [
             Author(
                 name=f'Author {i+1}',
-                affiliation=f'Affiliation {i+1}',
-                orcid=f'0000-0000-0000-000{i}',
-                ds_meta_data_id=seeded_ds_meta_data[i % 4].id
-            ) for i in range(4)
+                affiliation=f'Institution {chr(65 + (i % 3))}',
+                orcid=f'0000-0000-000{i+1:02}-000{i+2:02}',
+                ds_meta_data_id=seeded_ds_meta_data[i % len(seeded_ds_meta_data)].id
+            ) for i in range(8)
         ]
         self.seed(authors)
 
-        # Create DataSet instances
+        # Create DataSet instances with static creation dates
         datasets = [
             DataSet(
                 user_id=user1.id if i % 2 == 0 else user2.id,
                 ds_meta_data_id=seeded_ds_meta_data[i].id,
-                created_at=datetime.now(timezone.utc)
-            ) for i in range(4)
+                created_at=datetime.now(timezone.utc) - timedelta(days=i * 30)
+            ) for i in range(6)
         ]
         seeded_datasets = self.seed(datasets)
 
-        # Assume there are 12 UVL files, create corresponding FMMetaData and FeatureModel
+        # Create FMMetaData and FeatureModel instances with static data
         fm_meta_data_list = [
             FMMetaData(
                 uvl_filename=f'file{i+1}.uvl',
-                title=f'Feature Model {i+1}',
-                description=f'Description for feature model {i+1}',
-                publication_type=PublicationType.SOFTWARE_DOCUMENTATION,
-                publication_doi=f'10.1234/fm{i+1}',
-                tags='tag1, tag2',
-                uvl_version='1.0'
+                title=f'Advanced Feature Model {i+1}',
+                description=f'In-depth description for feature model {i+1}.',
+                publication_type=PublicationType.CONFERENCE_PAPER,
+                publication_doi=f'10.9101/fm{i+1}',
+                tags=', '.join(["config", "system"] if i % 2 == 0 else ["modelling", "design"]),
+                uvl_version=f'1.{i % 5}'
             ) for i in range(12)
         ]
         seeded_fm_meta_data = self.seed(fm_meta_data_list)
 
-        # Create Author instances and associate with FMMetaData
         fm_authors = [
             Author(
-                name=f'Author {i+5}',
-                affiliation=f'Affiliation {i+5}',
-                orcid=f'0000-0000-0000-000{i+5}',
+                name=f'FeatureModel Author {i+1}',
+                affiliation=f'Company {chr(88 + (i % 3))}',
+                orcid=f'0000-0000-000{i+2:02}-000{i+3:02}',
                 fm_meta_data_id=seeded_fm_meta_data[i].id
             ) for i in range(12)
         ]
@@ -93,20 +95,20 @@ class DataSetSeeder(BaseSeeder):
 
         feature_models = [
             FeatureModel(
-                data_set_id=seeded_datasets[i // 3].id,
+                data_set_id=seeded_datasets[i % len(seeded_datasets)].id,
                 fm_meta_data_id=seeded_fm_meta_data[i].id
             ) for i in range(12)
         ]
         seeded_feature_models = self.seed(feature_models)
 
-        # Create files, associate them with FeatureModels and copy files
+        # Create and copy files
         load_dotenv()
         working_dir = os.getenv('WORKING_DIR', '')
         src_folder = os.path.join(working_dir, 'app', 'modules', 'dataset', 'uvl_examples')
         for i in range(12):
             file_name = f'file{i+1}.uvl'
             feature_model = seeded_feature_models[i]
-            dataset = next(ds for ds in seeded_datasets if ds.id == feature_model.data_set_id)
+            dataset = seeded_datasets[i % len(seeded_datasets)]
             user_id = dataset.user_id
 
             dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')

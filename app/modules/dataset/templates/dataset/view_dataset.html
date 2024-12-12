@@ -51,6 +51,37 @@
 
                     </div>
                 </div>
+
+                <h2>Average Ratings</h2>
+                <p>Quality: <span id="avg-quality">Loading...</span></p>
+                <p>Size: <span id="avg-size">Loading...</span></p>
+                <p>Usability: <span id="avg-usability">Loading...</span></p>
+                <p>Overall Rating: <span id="avg-total">Loading...</span></p>                
+
+                <h3>Rate This Dataset</h3>
+                <form id="rating-form">
+                    <input type="hidden" id="user_id" value="{{ current_user.id }}">
+                    <input type="hidden" id="dataset_id" value="{{ dataset.id }}">
+                    
+                    <label for="quality">Quality (1-5):</label>
+                    <input id="quality" name="quality" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
+                    <label for="size">Size (1-5):</label>
+                    <input id="size" name="size" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
+                    <label for="usability">Usability (1-5):</label>
+                    <input id="usability" name="usability" type="number" min="1" max="5" step="1" required>
+                    <br>
+                
+                    
+                    <button id="submit-rating">Submit Rating</button>
+                </form>
+                
+
+                
+
             </div>
 
             {% for feature_model in dataset.feature_models %}
@@ -367,6 +398,269 @@
             console.error('Failed to copy text: ', err);
         });
     }
+
+    /*AÑADIDO */
+    document.addEventListener("DOMContentLoaded", async function () {
+        try {
+            const datasetId = getDatasetId();
+            if (!datasetId) {
+                console.error("No se pudo obtener el datasetId. Verifica que el elemento existe y tiene un valor válido.");
+                return;
+            }
+
+            await loadAverageRatings(datasetId);
+            await loadUserRating(datasetId);
+
+            const submitButton = document.getElementById("submit-rating");
+            if (!submitButton) {
+                console.error("El botón con id 'submit-rating' no existe.");
+                return;
+            }
+
+            submitButton.addEventListener("click", async function (event) {
+                await submitRating(event);
+            });
+        } catch (error) {
+            console.error("Error durante la inicialización:", error);
+        }
+    });
+
+    async function loadAverageRatings(datasetId) {
+        try {
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error loading ratings: ${response.status}`);
+
+            const data = await response.json();
+            console.log("Datos recibidos del servidor:", data); 
+            if (data.avg_ratings) {
+                updateAverageRatings(data.avg_ratings);
+            } else {
+                console.warn("No se encontraron medias en la respuesta del servidor.");
+            }
+        } catch (error) {
+            console.error("Error loading average ratings:", error);
+            alert("Failed to load ratings. Please try again.");
+        }
+    }
+
+    function updateAverageRatings(avgRatings) {
+        if (!avgRatings) {
+            console.warn("No se proporcionaron datos de promedios para actualizar.");
+            return;
+        }
+
+        console.log("Datos originales del servidor:", avgRatings);
+
+        const numericRatings = {
+            quality: parseFloat(avgRatings.average_quality || avgRatings.quality) || 0,
+            size: parseFloat(avgRatings.average_size || avgRatings.size) || 0,
+            usability: parseFloat(avgRatings.average_usability || avgRatings.usability) || 0,
+            total: parseFloat(avgRatings.average_total || avgRatings.total) || 0,
+        };
+
+        console.log("Datos convertidos a números:", numericRatings);
+
+        for (const key in numericRatings) {
+            if (numericRatings[key] === 0 && avgRatings[key]) {
+                console.error(`El valor para '${key}' no fue convertido correctamente. Verifica su formato.`);
+            }
+        }
+
+        const elementsToUpdate = {
+            "avg-quality": numericRatings.quality,
+            "avg-size": numericRatings.size,
+            "avg-usability": numericRatings.usability,
+            "avg-total": numericRatings.total,
+        };
+
+        for (const id in elementsToUpdate) {
+            const element = document.querySelector(`#${id}`);
+            if (element) {
+                element.textContent = elementsToUpdate[id].toFixed(2);
+            } else {
+                console.error(`Elemento con ID ${id} no encontrado.`);
+            }
+        }
+
+        console.log("Medias actualizadas en el DOM:", numericRatings);
+    }
+
+
+    async function submitRating(event) {
+        event.preventDefault();
+
+        const userId = getCurrentUserId();
+        const datasetId = getDatasetId();
+        const quality = getQualityRating();
+        const size = getSizeRating();
+        const usability = getUsabilityRating();
+
+        if (!datasetId || !quality || !size || !usability) {
+            alert("Por favor, complete todos los campos de la calificación.");
+            return;
+        }
+        
+        if (!userId) {
+            alert("Debes iniciar sesión para enviar una calificación.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/rate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    dataset_id: datasetId,
+                    quality,
+                    size,
+                    usability,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Datos recibidos del servidor:", data);
+
+                if (data.avg_ratings) {
+                    updateAverageRatings(data.avg_ratings);
+                } else {
+                    console.warn("No se recibieron datos de medias actualizadas del servidor.");
+                }
+            } else {
+                throw new Error("Error en la respuesta del servidor");
+            }
+        } catch (error) {
+            console.error("Error al enviar la calificación:", error);
+            alert("Hubo un error al enviar la calificación. Intenta nuevamente.");
+        }
+    }
+
+    async function loadUserRating(datasetId) {
+        try {
+            const response = await fetch(`/ratings/${datasetId}`);
+            if (!response.ok) throw new Error(`Error al cargar user rating: ${response.status}`);
+
+            const data = await response.json();
+            if (data.user_rating) updateUserRating(data.user_rating);
+        } catch (error) {
+            console.error("Error loading user rating:", error);
+        }
+    }
+
+    function updateUserRating(userRating) {
+        if (!userRating) {
+            console.warn("No se proporcionaron datos de calificación del usuario para actualizar.");
+            return;
+        }
+
+        console.log("Actualizando calificación del usuario con datos:", userRating);
+
+        const qualityElement = document.getElementById('quality');
+        const sizeElement = document.getElementById('size');
+        const usabilityElement = document.getElementById('usability');
+
+        if (qualityElement) qualityElement.value = userRating.quality || "";
+        if (sizeElement) sizeElement.value = userRating.size || "";
+        if (usabilityElement) usabilityElement.value = userRating.usability || "";
+    }
+
+    function getCurrentUserId() {
+        return document.getElementById('user_id')?.value || null;
+    }
+
+    function getDatasetId() {
+        return document.getElementById('dataset_id')?.value || null;
+    }
+
+    function getQualityRating() {
+        const qualityInput = document.getElementById('quality');
+        if (!qualityInput || qualityInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de calidad seleccionado.");
+            return null;
+        }
+        return Number(qualityInput.value);
+    }
+
+    function getSizeRating() {
+        const sizeInput = document.getElementById('size');
+        if (!sizeInput || sizeInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de tamaño seleccionado.");
+            return null;
+        }
+        return Number(sizeInput.value);
+    }
+
+    function getUsabilityRating() {
+        const usabilityInput = document.getElementById('usability');
+        if (!usabilityInput || usabilityInput.value.trim() === "") {
+            console.warn("No se encontró ningún rating de usabilidad seleccionado.");
+            return null;
+        }
+        return Number(usabilityInput.value);
+    }
+
+    
+    const element = document.getElementById("Ids-necesarios");
+    const currentId = element.getAttribute("currentId")
+    const followedId = element.getAttribute("followedId");
+    const datasetId = element.getAttribute("datasetId");
+
+    async function fetchMessages() {
+        
+        const response = await fetch(`/get_comments?dataset_id=${datasetId}`);
+        const messages = await response.json();
+        const commentMessages = document.getElementById('comment-messages');
+
+        // Limpia el área de mensajes
+        commentMessages.innerHTML = '';
+        
+        // Agrega los mensajes obtenidos
+        if (messages.length === 0) {
+            const noCommentsMessage = document.createElement('p');
+            noCommentsMessage.textContent = "No hay comentarios aún.";
+            commentMessages.appendChild(noCommentsMessage);
+        } else {
+            messages.forEach(msg => {
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+            commentMessages.appendChild(messageElement);
+        });
+    }
+
+        // Hace scroll automático al final
+        commentMessages.scrollTop = commentMessages.scrollHeight;
+    }
+
+    // Función para enviar un mensaje
+    async function sendMessage() {
+        
+        const input = document.getElementById('message-input');
+        const text = input.value;
+
+        if (text.trim()) {
+            await fetch('/send_comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ followed_id: followedId, dataset_id: datasetId, text: text }),
+            });
+
+            // Limpia el campo de texto
+            input.value = '';
+
+            // Actualiza los mensajes
+            await fetchMessages();
+        }
+    }
+
+    if (currentId) document.getElementById('send-button').addEventListener('click', sendMessage);
+
+    // Actualiza los mensajes automáticamente cada 2 segundos
+    setInterval(fetchMessages, 5000);
+
+    fetchMessages();
 </script>
 
 {% endblock %}
