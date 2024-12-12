@@ -26,9 +26,9 @@ class TestSeleniumFile:
         self.driver.find_element(By.ID, "password").send_keys("1234")
         self.driver.find_element(By.ID, "submit").click()
         time.sleep(1)
-        self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+        self.driver.find_element(By.LINK_TEXT, "Sample dataset 5").click()
         time.sleep(1)
-        button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'file10.uvl')]")
+        button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'file5.uvl')]")
         button.click()
 
         WebDriverWait(self.driver, 10).until(
@@ -49,7 +49,7 @@ class TestSeleniumFile:
         download_button.click()
         time.sleep(1)
         
-        check_button = self.driver.find_element(By.ID, "btnGroupDropExport60")
+        check_button = self.driver.find_element(By.ID, "btnGroupDropExport85")
         check_button.click()
         time.sleep(1)
         
@@ -65,7 +65,7 @@ class TestSeleniumFile:
                 f.write(self.driver.page_source)
                 raise AssertionError(f"Error al interactuar con UVL: {str(e)}")
             
-        check_button = self.driver.find_element(By.ID, "btnGroupDrop60")
+        check_button = self.driver.find_element(By.ID, "btnGroupDrop85")
         check_button.click()
         time.sleep(1)
         
@@ -80,9 +80,9 @@ class TestSeleniumFile:
         button.click()
         
         time.sleep(1)
-        button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'file12.uvl')]")
+        button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'file5.uvl')]")
         button.click()
         
         time.sleep(1)
-        self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+        self.driver.find_element(By.LINK_TEXT, "Sample dataset 5").click()
         time.sleep(1)
