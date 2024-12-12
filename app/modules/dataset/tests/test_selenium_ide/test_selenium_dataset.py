@@ -18,11 +18,11 @@ class TestSeleniumDataset:
     def test_file_content(self):
         self.driver.get(get_host_for_selenium_testing())
         self.driver.find_element(By.LINK_TEXT, "Login").click()
-        self.driver.find_element(By.ID, "email").send_keys("user2@example.com")
+        self.driver.find_element(By.ID, "email").send_keys("user1@example.com")
         self.driver.find_element(By.ID, "password").send_keys("1234")
         self.driver.find_element(By.ID, "submit").click()
         time.sleep(1)
-        self.driver.find_element(By.LINK_TEXT, "Sample dataset 3").click()
+        self.driver.find_element(By.LINK_TEXT, "Sample dataset 6").click()
         time.sleep(1)
         self.driver.find_element(By.PARTIAL_LINK_TEXT, "Download all").click()
         time.sleep(1)
