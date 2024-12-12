@@ -229,4 +229,5 @@ def downgrade():
     op.drop_table('follow')
     op.drop_table('social')
     op.drop_table('dashboard')
+    op.drop_table('ratings')
     # ### end Alembic commands ###
