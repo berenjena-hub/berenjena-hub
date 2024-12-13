@@ -40,6 +40,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+
     - name: Run Tests
       env:
         FLASK_ENV: testing
@@ -50,10 +51,6 @@ jobs:
         MARIADB_PASSWORD: uvlhub_password
       run: |
         pytest app/modules/ --ignore-glob='*selenium*'
-
-    - name: Populate DB
-      run: |
-        rosemary db:seed
 
   deploy:
     name: Deploy to Render
@@ -68,5 +65,13 @@ jobs:
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          
           curl "$deploy_url"
+    
+      - name: Seed Database
+        env:
+          FLASK_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          pip install -r requirements.txt
+          flask db upgrade
+          rosemary db:seed
