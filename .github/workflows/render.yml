@@ -66,15 +66,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Apply Database Migrations
+      - name: Populate DataBase
         env:
           FLASK_ENV: production
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MARIADB_HOSTNAME: sz2bd.h.filess.io
+          MARIADB_PORT: 3305
+          MARIADB_DATABASE: berenjena_drinkgrow
+          MARIADB_USER: berenjena_drinkgrow
+          MARIADB_PASSWORD: ${{ secrets.DATABASE_URL }}
         run: |
-          echo "Applying database migrations..."
-          flask db upgrade
-          echo "Seeding the database..."
-          flask db:seed --yes
+          rosemary db:seed
 
       - name: Deploy to Render
         env:
