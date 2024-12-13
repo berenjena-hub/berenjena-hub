@@ -60,13 +60,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-
-      - name: Deploy to Render
-        env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          curl "$deploy_url"
-    
+        
       - name: Seed Database
         env:
           FLASK_ENV: production
@@ -75,3 +69,12 @@ jobs:
           pip install -r requirements.txt
           flask db upgrade
           rosemary db:seed
+
+
+      - name: Deploy to Render
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
+    
+      
