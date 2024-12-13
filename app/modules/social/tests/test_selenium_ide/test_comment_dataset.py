@@ -21,7 +21,7 @@ class TestCommentdataset():
         self.driver.find_element(By.ID, "password").send_keys("1234")
         self.driver.find_element(By.ID, "submit").click()
         time.sleep(1)
-        self.driver.find_element(By.LINK_TEXT, "Sample dataset 4").click()
+        self.driver.find_element(By.LINK_TEXT, "Sample dataset 6").click()
         time.sleep(1)
         self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(1)
