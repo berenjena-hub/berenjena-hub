@@ -2,8 +2,6 @@ name: Deploy to Render
 
 on:
     push:
-      branches:
-        -Luis-Giraldo-Santaigo
       tags:
       - 'v*' 
     pull_request:
