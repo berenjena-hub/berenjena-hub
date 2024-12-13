@@ -47,7 +47,11 @@ class TestSeleniumDataset:
         self.driver.find_element(By.PARTIAL_LINK_TEXT, "Download Glencoe").click()
         time.sleep(1)
         time.sleep(1)
-        self.driver.find_element(By.XPATH, "//a[@href='https://doi.org/10.1016/j.jss.2024.112150']").click()
+        self.driver.execute_script("window.scrollBy(0, -250);")
+        element = self.driver.find_element(By.XPATH, "//a[@href='https://doi.org/10.1016/j.jss.2024.112150']")
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(1)
+        element.click()
         time.sleep(5)
         
         
