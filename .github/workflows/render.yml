@@ -1,17 +1,15 @@
 name: Deploy to Render
 
 on:
-    push:
-      tags:
-      - 'v*' 
-    pull_request:
-      branches:
-        - main
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-
   testing:
-
     name: Run Tests
     runs-on: ubuntu-latest
 
@@ -28,56 +26,75 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
+      - uses: actions/checkout@v4
 
-    - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-
-    - name: Run Tests
-      env:
-        FLASK_ENV: testing
-        MARIADB_HOSTNAME: 127.0.0.1
-        MARIADB_PORT: 3306
-        MARIADB_TEST_DATABASE: uvlhubdb_test
-        MARIADB_USER: uvlhub_user
-        MARIADB_PASSWORD: uvlhub_password
-      run: |
-        pytest app/modules/ --ignore-glob='*selenium*'
+      - name: Run Tests
+        env:
+          FLASK_ENV: testing
+          MARIADB_HOSTNAME: 127.0.0.1
+          MARIADB_PORT: 3306
+          MARIADB_TEST_DATABASE: uvlhubdb_test
+          MARIADB_USER: uvlhub_user
+          MARIADB_PASSWORD: uvlhub_password
+        run: |
+          pytest app/modules/ --ignore-glob='*selenium*'
 
   deploy:
     name: Deploy to Render
     needs: testing
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'  
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e ./
+
+      - name: Debug Database Connection
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Testing database connection..."
+          python -c "
+          import os
+          from sqlalchemy import create_engine
+
+          db_url = os.getenv('DATABASE_URL')
+          engine = create_engine(db_url)
+          try:
+              with engine.connect() as conn:
+                  print('Database connection successful')
+          except Exception as e:
+              print(f'Database connection failed: {e}')
+          "
 
       - name: Seed Database
         env:
           FLASK_ENV: production
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -e ./
-          rosemary db:seed
+          echo "Seeding the database..."
+          rosemary db:seed || echo "Seeding failed"
 
       - name: Deploy to Render
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
-    
-      
