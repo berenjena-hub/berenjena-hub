@@ -13,7 +13,7 @@ function send_query() {
     const filters = document.querySelectorAll('#filters input, #filters select, #filters [type="radio"]');
 
     filters.forEach(filter => {
-        filter.addEventListener('input', () => {
+        
             const csrfToken = document.getElementById('csrf_token').value;
 
             
@@ -214,11 +214,11 @@ function send_query() {
                     document.getElementById('results').appendChild(card);
                 });
             });
-        });
+        
     });
 }
 
-
+document.getElementById('apply-filters').addEventListener('click', send_query);
 
 function populateAuthorsFilter(data) {
     const authorsSet = new Set();
