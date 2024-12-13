@@ -65,34 +65,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -e ./
-          pip install PyMySQL
 
-      - name: Debug Database Connection
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          echo "Testing database connection..."
-          python -c "
-          import os
-          from sqlalchemy import create_engine
-
-          db_url = os.getenv('DATABASE_URL')
-          engine = create_engine(db_url)
-          try:
-              with engine.connect() as conn:
-                  print('Database connection successful')
-          except Exception as e:
-              print(f'Database connection failed: {e}')
-          "
-
-      - name: Seed Database
+      - name: Apply Database Migrations
         env:
           FLASK_ENV: production
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: mariadb+pymysql://pepe:MICONTRASEÑA@2xdj0.h.filess.io:3305/pepe
         run: |
+          echo "Applying database migrations..."
+          flask db upgrade
           echo "Seeding the database..."
-          rosemary db:seed || echo "Seeding failed"
+          flask db:seed --yes
 
       - name: Deploy to Render
         env:
