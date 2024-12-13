@@ -266,6 +266,35 @@
     </div>
 </div>
 
+<!-- Contenedor para los comentarios -->
+<div class="row">
+    <div id="Ids-necesarios" currentId="{{current_user.id}}" followedId="{{ dataset.user.profile.user.id}}" datasetId="{{dataset.id}}" disable></div>
+    <div id="comment-container" class="col-12 col-md-8 col-lg-9 hidden">
+        <div class="card shadow-sm">
+            <div class="card-header card-dark">
+                <h5 id="comment-title" class="card-title mb-0" style="color: white; font-size: 15px;">
+                    Comments
+                </h5>
+            </div>
+            <div id="comment-messages" class="card-body chat-messages" style="height: 400px; overflow-y: auto; background-color: #f9f9f9;">
+            </div>
+            {% if current_user.id %}
+            <div class="card-footer">
+                <div class="d-flex">
+                    <input type="text" id="message-input" class="form-control me-2" placeholder="Escribe un comentario...">
+                    <button id="send-button" type="button" class="btn btn-success">Enviar</button>
+                </div>
+            </div>
+            {% else %}
+            <div class="card-footer">
+                <div class="d-flex">
+                    Inicia sesión o registrate para comentar
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 
 
