@@ -179,12 +179,12 @@ def upgrade():
     sa.Column('text', sa.String(length=266), nullable=False),
     sa.Column('comment', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('follower_id', sa.Integer(), nullable=False),
-    sa.Column('followed_id', sa.Integer(), nullable=False),
-    sa.Column('dataset_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['follower_id'], ['user.id']),
-    sa.ForeignKeyConstraint(['followed_id'], ['user.id']),
-    sa.ForeignKeyConstraint(['dataset_id'], ['data_set.id'], ),
+    sa.Column('follower', sa.Integer(), nullable=False),
+    sa.Column('followed', sa.Integer(), nullable=False),
+    sa.Column('data_set', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['follower'], ['user.id']),
+    sa.ForeignKeyConstraint(['followed'], ['user.id']),
+    sa.ForeignKeyConstraint(['data_set'], ['data_set.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('dashboard',
