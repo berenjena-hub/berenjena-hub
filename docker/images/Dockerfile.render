@@ -1,54 +1,53 @@
-# Dockerfile modificado para incluir la carpeta uploads
+# Use an official Python runtime as a parent image, Alpine version for a lighter footprint
 FROM python:3.12-slim
 
-# Instalación de dependencias
+# Install necessary packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends mariadb-client \
     && apt-get install -y --no-install-recommends gcc libc-dev python3-dev libffi-dev \
     && apt-get install -y --no-install-recommends curl \
     && apt-get install -y --no-install-recommends bash \
     && apt-get install -y --no-install-recommends openrc \
-    && apt-get install -y --no-install-recommends build-essential \
-    && apt-get clean \
+    && apt-get install -y --no-install-recommends build-essential 
+
+# Clean up
+RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Copiar los archivos de la aplicación
+# Copy files
 COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
 
-# Copiar la carpeta uploads
-COPY uploads/ ./uploads
-
-# Copiar requirements.txt en el directorio de trabajo /app
+# Copy requirements.txt into the working directory /app
 COPY requirements.txt .
 
-# Eliminar cachés de la compilación
+# Removes cache at the build stage
 RUN find . -type d -name "__pycache__" -exec rm -r {} + && \
     find . -type f -name "*.pyc" -exec rm -f {} +
 
-# Copiar el punto de entrada y establecer permisos de ejecución
+# Copy entrypoint and set execution permissions
 COPY docker/entrypoints/render_entrypoint.sh /app/render_entrypoint.sh
 RUN chmod +x /app/render_entrypoint.sh
 
-# Copiar el script wait-for-db.sh y establecer permisos de ejecución
+# Copy the wait-for-db.sh script and set execution permissions
 COPY scripts/wait-for-db.sh /app/scripts/wait-for-db.sh
 RUN chmod +x /app/scripts/wait-for-db.sh
 
-# Crear el archivo .moduleignore con el módulo 'webhook' dentro
+# Create the .moduleignore file with the module 'webhook' inside
 RUN echo "webhook" > /app/.moduleignore
 
-# Actualizar pip
+# Update pip
 RUN pip install --no-cache-dir --upgrade pip
 
-# Instalar cualquier paquete necesario especificado en requirements.txt
+# Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
-# Exponer el puerto 80
+# Expose port 80
 EXPOSE 80
 
-# Comando para ejecutar la aplicación
+# Command to run the application
 CMD ["./render_entrypoint.sh"]
