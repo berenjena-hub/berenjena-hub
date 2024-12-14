@@ -56,6 +56,12 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+        with:
+          ref: main  # Ensure the latest code from the main branch
+
+      - name: Copy uploads folder
+        run: |
+          cp -r ./uploads cp -r ./uploads /app/uploads
 
       - uses: actions/setup-python@v5
         with:
@@ -81,7 +87,3 @@ jobs:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
-
-      - name: Copy uploads folder
-        run: |
-          cp -r ./uploads /app/uploads
