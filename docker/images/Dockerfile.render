@@ -1,50 +1,58 @@
-# Usar una imagen base con Python 3.12 y Alpine para un tamaño más ligero
+# Dockerfile
+
+# Use an official Python runtime as a parent image, Alpine version for a lighter footprint
 FROM python:3.12-slim
 
-# Instalación de dependencias adicionales necesarias para el sistema
+# Install necessary packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends mariadb-client \
     && apt-get install -y --no-install-recommends gcc libc-dev python3-dev libffi-dev \
     && apt-get install -y --no-install-recommends curl \
     && apt-get install -y --no-install-recommends bash \
     && apt-get install -y --no-install-recommends openrc \
-    && apt-get install -y --no-install-recommends build-essential \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends build-essential 
 
-# Establecer el directorio de trabajo dentro del contenedor
+# Clean up
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory in the container to /app
 WORKDIR /app
 
-# Montar la carpeta `uploads` directamente dentro del contenedor
-VOLUME /app/uploads
-
-# Copiar los archivos necesarios para la aplicación
+# Copy files
 COPY app/ ./app
 COPY core/ ./core
+COPY migrations/ ./migrations
+
+# Copy requirements.txt into the working directory /app
 COPY requirements.txt .
 
-# Limpiar cachés y archivos temporales
+# Removes cache at the build stage
 RUN find . -type d -name "__pycache__" -exec rm -r {} + && \
     find . -type f -name "*.pyc" -exec rm -f {} +
 
-# Copiar el script de entrada y dar permisos de ejecución
+# Copy entrypoint and set execution permissions
 COPY docker/entrypoints/render_entrypoint.sh /app/render_entrypoint.sh
 RUN chmod +x /app/render_entrypoint.sh
 
-# Copiar el script de espera por la base de datos y dar permisos de ejecución
+# Copy the wait-for-db.sh script and set execution permissions
 COPY scripts/wait-for-db.sh /app/scripts/wait-for-db.sh
 RUN chmod +x /app/scripts/wait-for-db.sh
 
-# Crear el archivo .moduleignore para evitar módulos no deseados
+# Create the .moduleignore file with the module 'webhook' inside
 RUN echo "webhook" > /app/.moduleignore
 
-# Actualizar pip
+# Update pip
 RUN pip install --no-cache-dir --upgrade pip
 
-# Instalar los paquetes necesarios especificados en requirements.txt
+# Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
-# Exponer el puerto 80 para la aplicación
+# Expose port 80
 EXPOSE 80
 
-# Comando para iniciar la aplicación
+# Copy the uploads folder directly into the container
+COPY uploads /app/uploads
+
+# Command to run the application
 CMD ["./render_entrypoint.sh"]
