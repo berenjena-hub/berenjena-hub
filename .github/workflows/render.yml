@@ -64,10 +64,10 @@ jobs:
       - name: Populate DataBase
         env:
           FLASK_ENV: production
-          MARIADB_HOSTNAME: t2r1q.h.filess.io
+          MARIADB_HOSTNAME: ukovu.h.filess.io
           MARIADB_PORT: 3305
-          MARIADB_DATABASE: berenjena_announced
-          MARIADB_USER: berenjena_announced
+          MARIADB_DATABASE: berenjenaHub_killeachso
+          MARIADB_USER: berenjenaHub_killeachso
           MARIADB_PASSWORD: ${{ secrets.DATABASE_URL }}
         run: |
           python -m pip install --upgrade pip

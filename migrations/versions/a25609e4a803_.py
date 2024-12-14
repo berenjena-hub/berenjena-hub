@@ -52,6 +52,10 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('fakenodo',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('ds_meta_data',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('deposition_id', sa.Integer(), nullable=True),
@@ -221,6 +225,7 @@ def downgrade():
     op.drop_table('fm_meta_data')
     op.drop_table('ds_meta_data')
     op.drop_table('zenodo')
+    op.drop_table('fakenodo')
     op.drop_table('webhook')
     op.drop_table('user')
     op.drop_table('fm_metrics')
