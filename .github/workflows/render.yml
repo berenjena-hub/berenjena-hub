@@ -61,13 +61,18 @@ jobs:
         with:
           python-version: '3.12'          
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Populate DataBase
         env:
           FLASK_ENV: production
-          MARIADB_HOSTNAME: 7uxgw.h.filess.io
+          MARIADB_HOSTNAME: q1uea.h.filess.io
           MARIADB_PORT: 3305
-          MARIADB_DATABASE: berenjena_shakedull
-          MARIADB_USER: berenjena_shakedull
+          MARIADB_DATABASE: Berenjena_driventool
+          MARIADB_USER: Berenjena_driventool
           MARIADB_PASSWORD: ${{ secrets.DATABASE_URL }}
         run: |
           python -m pip install --upgrade pip
@@ -75,12 +80,14 @@ jobs:
           pip install -e ./
           flask db upgrade  
           rosemary db:seed
-          mkdir -p /path/to/container/uploads
-          cp -r ./uploads /path/to/container/uploads
+
+      - name: Copy uploads directory to container
+        run: |
+          mkdir -p /app/uploads
+          cp -r ./uploads /app/uploads
 
       - name: Deploy to Render
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-          DOCKER_VOLUME: /app/uploads
         run: |
           curl "$deploy_url"
