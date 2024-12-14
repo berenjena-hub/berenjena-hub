@@ -81,5 +81,6 @@ jobs:
       - name: Deploy to Render
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          DOCKER_VOLUME: /app/uploads
         run: |
           curl "$deploy_url"
