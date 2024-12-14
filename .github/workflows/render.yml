@@ -81,3 +81,8 @@ jobs:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
+
+      - name: Mount uploads folder
+        run: |
+          docker cp ./uploads ${{ env.DOCKER_CONTAINER_ID }}:/app/uploads
+        
