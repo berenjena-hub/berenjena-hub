@@ -73,8 +73,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -e ./
-          flask db upgrade
+          flask db upgrade  
           rosemary db:seed
+
+      - name: Ensure Uploads Directory Exists
+        run: |
+          mkdir -p ./uploads/
+      
+      - name: Fix permissions for uploads folder
+        run: |
+          chmod -R 755 ./uploads/
 
       - name: Deploy to Render
         env:
