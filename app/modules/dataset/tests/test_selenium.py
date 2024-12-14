@@ -152,7 +152,7 @@ def test_downloadfilesindatasetview():
     driver.find_element(By.ID, "btnGroupDropExport162").click()
     driver.find_element(By.LINK_TEXT, "SPLOT").click()
     time.sleep(2)
-    driver.find_element(By.ID, "btnGroupDropExport34").click()
+    driver.find_element(By.ID, "btnGroupDropExport162").click()
     driver.find_element(By.LINK_TEXT, "JSON").click()
     time.sleep(2)
     driver.find_element(By.ID, "btnGroupDropExport162").click()
