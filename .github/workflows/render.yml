@@ -73,9 +73,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -e ./
-          flask db upgrade
-          mkdir -p uploads
-          echo "Carpeta 'uploads' creada."
+          flask db upgrade  
           rosemary db:seed
 
       - name: Deploy to Render
