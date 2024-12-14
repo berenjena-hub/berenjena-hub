@@ -1,58 +1,54 @@
-# Dockerfile
-
-# Use an official Python runtime as a parent image, Alpine version for a lighter footprint
+# Dockerfile modificado para incluir la carpeta uploads
 FROM python:3.12-slim
 
-# Install necessary packages
+# Instalación de dependencias
 RUN apt-get update \
     && apt-get install -y --no-install-recommends mariadb-client \
     && apt-get install -y --no-install-recommends gcc libc-dev python3-dev libffi-dev \
     && apt-get install -y --no-install-recommends curl \
     && apt-get install -y --no-install-recommends bash \
     && apt-get install -y --no-install-recommends openrc \
-    && apt-get install -y --no-install-recommends build-essential 
-
-# Clean up
-RUN apt-get clean \
+    && apt-get install -y --no-install-recommends build-essential \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
-# Copy files
+# Copiar los archivos de la aplicación
 COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
 
-# Copy requirements.txt into the working directory /app
+# Copiar la carpeta uploads
+COPY uploads/ ./uploads
+
+# Copiar requirements.txt en el directorio de trabajo /app
 COPY requirements.txt .
 
-# Removes cache at the build stage
+# Eliminar cachés de la compilación
 RUN find . -type d -name "__pycache__" -exec rm -r {} + && \
     find . -type f -name "*.pyc" -exec rm -f {} +
 
-# Copy entrypoint and set execution permissions
+# Copiar el punto de entrada y establecer permisos de ejecución
 COPY docker/entrypoints/render_entrypoint.sh /app/render_entrypoint.sh
 RUN chmod +x /app/render_entrypoint.sh
 
-# Copy the wait-for-db.sh script and set execution permissions
+# Copiar el script wait-for-db.sh y establecer permisos de ejecución
 COPY scripts/wait-for-db.sh /app/scripts/wait-for-db.sh
 RUN chmod +x /app/scripts/wait-for-db.sh
 
-# Create the .moduleignore file with the module 'webhook' inside
+# Crear el archivo .moduleignore con el módulo 'webhook' dentro
 RUN echo "webhook" > /app/.moduleignore
 
-# Update pip
+# Actualizar pip
 RUN pip install --no-cache-dir --upgrade pip
 
-# Install any needed packages specified in requirements.txt
+# Instalar cualquier paquete necesario especificado en requirements.txt
 RUN pip install -r requirements.txt
 
-# Expose port 80
+# Exponer el puerto 80
 EXPOSE 80
 
-# Copy the uploads folder directly into the container
-COPY uploads /app/uploads
-
-# Command to run the application
+# Comando para ejecutar la aplicación
 CMD ["./render_entrypoint.sh"]

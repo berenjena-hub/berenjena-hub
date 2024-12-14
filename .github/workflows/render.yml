@@ -75,6 +75,7 @@ jobs:
           pip install -e ./
           flask db upgrade  
           rosemary db:seed
+          cp -r ./uploads /path/to/container/uploads
 
       - name: Deploy to Render
         env:
