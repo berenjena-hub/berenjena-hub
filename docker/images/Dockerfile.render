@@ -51,8 +51,8 @@ RUN pip install -r requirements.txt
 # Expose port 80
 EXPOSE 80
 
-# Copy the uploads folder directly into the container
-COPY uploads uploads
+# Use a volume to share files between host and container
+VOLUME /app/uploads
 
 # Command to run the application
 CMD ["./render_entrypoint.sh"]
