@@ -61,11 +61,6 @@ jobs:
         with:
           python-version: '3.12'          
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
       - name: Populate DataBase
         env:
           FLASK_ENV: production
@@ -81,13 +76,12 @@ jobs:
           flask db upgrade  
           rosemary db:seed
 
-      - name: Copy uploads directory to container
-        run: |
-          mkdir -p /app/uploads
-          cp -r ./uploads /app/uploads
-
       - name: Deploy to Render
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           curl "$deploy_url"
+
+      - name: Copy uploads folder
+        run: |
+          cp -r ./uploads /app/uploads
