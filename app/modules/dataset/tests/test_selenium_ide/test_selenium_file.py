@@ -49,8 +49,9 @@ class TestSeleniumFile:
         download_button.click()
         time.sleep(1)
         
-        check_button = self.driver.find_element(By.ID, "btnGroupDropExport121")
+        check_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'btn-primary') and contains(@class, 'dropdown-toggle')]")
         check_button.click()
+
         time.sleep(1)
         
         try:
@@ -65,8 +66,9 @@ class TestSeleniumFile:
                 f.write(self.driver.page_source)
                 raise AssertionError(f"Error al interactuar con UVL: {str(e)}")
             
-        check_button = self.driver.find_element(By.ID, "btnGroupDrop121")
+        check_button = self.driver.find_element(By.XPATH, "//button[contains(@class, 'btn-outline-primary') and normalize-space()='Check']")
         check_button.click()
+
         time.sleep(1)
         
         syntax_check_option = self.driver.find_element(By.LINK_TEXT, "Syntax check")
