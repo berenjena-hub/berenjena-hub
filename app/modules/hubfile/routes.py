@@ -102,7 +102,7 @@ def view_file(file_id):
                 response.set_cookie('view_cookie', user_cookie, max_age=60*60*24*365*2)
 
             return response
-        elif os.path.exists(github_file_url):
+        elif github_file_url:
             # Realiza la solicitud al Raw del archivo en GitHub
             response = requests.get(github_raw_url)
             if response.status_code != 200:
