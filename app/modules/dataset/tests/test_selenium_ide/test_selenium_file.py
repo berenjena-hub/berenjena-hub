@@ -49,7 +49,7 @@ class TestSeleniumFile:
         download_button.click()
         time.sleep(1)
         
-        check_button = self.driver.find_element(By.ID, "btnGroupDropExport85")
+        check_button = self.driver.find_element(By.ID, "btnGroupDropExport121")
         check_button.click()
         time.sleep(1)
         
@@ -65,7 +65,7 @@ class TestSeleniumFile:
                 f.write(self.driver.page_source)
                 raise AssertionError(f"Error al interactuar con UVL: {str(e)}")
             
-        check_button = self.driver.find_element(By.ID, "btnGroupDrop85")
+        check_button = self.driver.find_element(By.ID, "btnGroupDrop121")
         check_button.click()
         time.sleep(1)
         
