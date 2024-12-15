@@ -19,14 +19,17 @@ def download_file(file_id):
 
     directory_path = f"uploads/user_{file.feature_model.data_set.user_id}/dataset_{file.feature_model.data_set_id}/"
     parent_directory_path = os.path.dirname(current_app.root_path)
-    file_path = os.path.join(parent_directory_path, directory_path)
+    file_path = os.path.join(parent_directory_path, directory_path, filename)
 
-    # Get the cookie from the request or generate a new one if it does not exist
+    # URL pública en GitHub
+    github_raw_url = f"https://raw.githubusercontent.com/berenjena-hub/files/main/uploads/user_{file.feature_model.data_set.user_id}/dataset_{file.feature_model.data_set_id}/{filename}"
+
+    # Get or generate a cookie for the download
     user_cookie = request.cookies.get("file_download_cookie")
     if not user_cookie:
         user_cookie = str(uuid.uuid4())
 
-    # Check if the download record already exists for this cookie
+    # Check for existing download record
     existing_record = HubfileDownloadRecord.query.filter_by(
         user_id=current_user.id if current_user.is_authenticated else None,
         file_id=file_id,
@@ -34,7 +37,7 @@ def download_file(file_id):
     ).first()
 
     if not existing_record:
-        # Record the download in your database
+        # Record the download in the database
         HubfileDownloadRecordService().create(
             user_id=current_user.id if current_user.is_authenticated else None,
             file_id=file_id,
@@ -42,9 +45,23 @@ def download_file(file_id):
             download_cookie=user_cookie,
         )
 
-    # Save the cookie to the user's browser
+    # Check if file exists locally; if not, fetch it from GitHub
+    if not os.path.isfile(file_path):
+        try:
+            response = requests.get(github_raw_url, stream=True)
+            if response.status_code == 200:
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                with open(file_path, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=1024):
+                        f.write(chunk)
+            else:
+                return jsonify({"error": "Failed to download file from GitHub"}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    # Send the file as a response
     resp = make_response(
-        send_from_directory(directory=file_path, path=filename, as_attachment=True)
+        send_from_directory(directory=os.path.dirname(file_path), path=filename, as_attachment=True)
     )
     resp.set_cookie("file_download_cookie", user_cookie)
 
