@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import initialize_driver, close_driver
 
+#para comrpobar si existe al menos un titulo
 def test_dashboard_title_exists():
     driver = initialize_driver()
     try:
@@ -20,6 +21,7 @@ def test_dashboard_title_exists():
     finally:
         close_driver(driver)
 
+#para comprobar si existe al menos una tarjeta
 def test_dashboard_card_exists():
     driver = initialize_driver()
     try:
@@ -34,6 +36,7 @@ def test_dashboard_card_exists():
     finally:
         close_driver(driver)
 
+#para comrpobar si coincide el color
 def test_dashboard_title_color():
     driver = initialize_driver()
     try:
@@ -44,7 +47,7 @@ def test_dashboard_title_color():
                 EC.presence_of_element_located((By.ID, "dashboard-title"))
             )
             title_color = title_element.value_of_css_property("color")
-            expected_color = "rgba(0, 0, 0, 1)"  # Ajusta según tu CSS real
+            expected_color = "rgba(0, 0, 0, 1)" 
             if title_color != expected_color:
                 raise AssertionError(f'Test failed! El color del título no es el esperado. Se obtuvo: {title_color}')
         except TimeoutException:
@@ -52,6 +55,7 @@ def test_dashboard_title_color():
     finally:
         close_driver(driver)
 
+#para comprobar si datasets de usaurio sea visible o no
 def test_dashboard_user_datasets_count_visible():
     driver = initialize_driver()
     try:
@@ -69,6 +73,7 @@ def test_dashboard_user_datasets_count_visible():
     finally:
         close_driver(driver)
 
+#para comprobar el conteo de modelos de características sea visible y válido.
 def test_dashboard_feature_models_count():
     driver = initialize_driver()
     try:
@@ -85,7 +90,7 @@ def test_dashboard_feature_models_count():
             raise AssertionError('Test failed! No se encontró el elemento con el conteo de feature models.')
     finally:
         close_driver(driver)
-
+#para comprobar si contenedor principal del dashboard esté cargado y tenga un ancho válido.
 def test_dashboard_layout_integrity():
     driver = initialize_driver()
     try:
