@@ -103,17 +103,21 @@ def view_file(file_id):
 
             return response
         elif github_file_url:
-            # Realiza la solicitud al Raw del archivo en GitHub
-            response = requests.get(github_raw_url)
+            # Realiza la solicitud al HTML de la página de GitHub
+            response = requests.get(github_file_url)
             if response.status_code != 200:
-                return jsonify({'success': False, 'error': 'GitHub raw file not accessible'}), 404
+                return jsonify({'success': False, 'error': 'GitHub page not accessible'}), 404
 
-            # Analiza la estructura del HTML de la página Raw
+            # Analiza el contenido del HTML
             soup = BeautifulSoup(response.text, 'html.parser')
-            pre_block = soup.find('pre')
 
-            if pre_block:
-                content = pre_block.get_text()
+            # Encuentra el contenido del archivo (GitHub muestra los datos en un bloque de código)
+            code_block = soup.find('div', class_='blob-wrapper')
+            if not code_block:
+                return jsonify({'success': False, 'error': 'File content not found'}), 404
+
+            if code_block:
+                content = code_block.get_text()
                 return jsonify({'success': True, 'content': content})
             else:
                 return jsonify({'success': False, 'error': 'Content not found in GitHub raw file'}), 404
