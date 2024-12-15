@@ -198,3 +198,87 @@ def test_downloaddatasetsindatasetview():
     time.sleep(2)
     driver.find_element(By.LINK_TEXT, "Download AFM(828 bytes)").click()
     time.sleep(2)
+
+
+from selenium.webdriver.support import expected_conditions as EC
+
+def test_add_rating():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/login")
+        wait_for_page_to_load(driver)
+        
+        email_field = driver.find_element(By.NAME, "email")
+        password_field = driver.find_element(By.NAME, "password")
+
+        email_field.send_keys("user1@example.com")
+        password_field.send_keys("1234")
+        password_field.send_keys(Keys.RETURN)
+        wait_for_page_to_load(driver)
+
+        driver.get(f"{host}/doi/10.5678/dataset6/")  
+        wait_for_page_to_load(driver)
+
+        quality_field = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.NAME, "quality"))
+        )
+        quality_field.clear()
+        quality_field.send_keys("4")
+
+        size_field = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.NAME, "size"))
+        )
+        size_field.clear()
+        size_field.send_keys("5")
+
+        usability_field = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.NAME, "usability"))
+        )
+        usability_field.clear()
+        usability_field.send_keys("3")
+
+        submit_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "submit-rating"))
+        )
+        
+        driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+        driver.execute_script("arguments[0].click();", submit_button)
+        
+        wait_for_page_to_load(driver)
+
+        
+        updated_quality = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located((By.NAME, "quality"))
+        )
+        updated_size = driver.find_element(By.NAME, "size")
+        updated_usability = driver.find_element(By.NAME, "usability")
+
+        assert updated_quality.get_attribute('value') == "4", "Quality rating was not updated."
+        assert updated_size.get_attribute('value') == "5", "Size rating was not updated."
+        assert updated_usability.get_attribute('value') == "3", "Usability rating was not updated."
+
+        print("Test for add_rating passed!")
+
+    finally:
+        close_driver(driver)
+
+
+def test_get_average_rating():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        driver.get(f"{host}/doi/10.5678/dataset6/") 
+
+
+    finally:
+        close_driver(driver)
+
+
+
+
+
