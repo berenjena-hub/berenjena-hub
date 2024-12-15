@@ -51,16 +51,6 @@ def download_file(file_id):
     return resp
 
 
-import os
-import uuid
-from flask import request, jsonify, make_response, current_app
-from bs4 import BeautifulSoup
-import requests
-from datetime import datetime
-from app import db
-from models import HubfileService, HubfileViewRecord
-
-
 @hubfile_bp.route('/file/view/<int:file_id>', methods=['GET'])
 def view_file(file_id):
     # Obtener el archivo desde la base de datos
