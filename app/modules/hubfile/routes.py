@@ -1,11 +1,13 @@
 from datetime import datetime, timezone
 import os
 import uuid
+import requests
 from flask import current_app, jsonify, make_response, request, send_from_directory
 from flask_login import current_user
 from app.modules.hubfile import hubfile_bp
 from app.modules.hubfile.models import HubfileDownloadRecord, HubfileViewRecord
 from app.modules.hubfile.services import HubfileDownloadRecordService, HubfileService
+from bs4 import BeautifulSoup
 
 from app import db
 
@@ -101,38 +103,20 @@ def view_file(file_id):
 
             return response
         elif os.path.exists(github_file_url):
-            with open(file_path, 'r') as f:
-                content = f.read()
+            # Realiza la solicitud al Raw del archivo en GitHub
+            response = requests.get(github_raw_url)
+            if response.status_code != 200:
+                return jsonify({'success': False, 'error': 'GitHub raw file not accessible'}), 404
 
-            user_cookie = request.cookies.get('view_cookie')
-            if not user_cookie:
-                user_cookie = str(uuid.uuid4())
+            # Analiza la estructura del HTML de la página Raw
+            soup = BeautifulSoup(response.text, 'html.parser')
+            pre_block = soup.find('pre')
 
-            # Check if the view record already exists for this cookie
-            existing_record = HubfileViewRecord.query.filter_by(
-                user_id=current_user.id if current_user.is_authenticated else None,
-                file_id=file_id,
-                view_cookie=user_cookie
-            ).first()
-
-            if not existing_record:
-                # Register file view
-                new_view_record = HubfileViewRecord(
-                    user_id=current_user.id if current_user.is_authenticated else None,
-                    file_id=file_id,
-                    view_date=datetime.now(),
-                    view_cookie=user_cookie
-                )
-                db.session.add(new_view_record)
-                db.session.commit()
-
-            # Prepare response
-            response = jsonify({'success': True, 'content': content})
-            if not request.cookies.get('view_cookie'):
-                response = make_response(response)
-                response.set_cookie('view_cookie', user_cookie, max_age=60*60*24*365*2)
-
-            return response
+            if pre_block:
+                content = pre_block.get_text()
+                return jsonify({'success': True, 'content': content})
+            else:
+                return jsonify({'success': False, 'error': 'Content not found in GitHub raw file'}), 404
         else:
             return jsonify({'success': False, 'error': 'File not found'}), 404
     except Exception as e:
