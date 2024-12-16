@@ -75,6 +75,11 @@
  - La creación de las rutas necesarias en routes.py para el manejo de la calificación de los datasets y su visualización.
  - La adición del html necesario en view_dataset.html para que sea posible el uso del backend, así como el código correspondiente al proceso en js.
 
+ #### <u>Social Module </u>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para la implementación de este WI se ha modificado la vista 'view_dataset' y se han creado dos nuevas, la cuales son 'other' del modulo profile y 'index' del modulo social. En la vista de 'view_dataset', se añade una sección que es la de comentarios, la cual siver para dejar tu comentario del dataset. En la vista 'other', se añade el botón para seguir a usuario. En la vista 'index', se añade la funcionalidad de chatear con personas que tu sigues y estas a su vez te siguen. Para disfrutar de estás funcionalidades tienes que ser un usuario autenticado de la página.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para estás implementaciones se creó un nuevo módulo el cual se llamó social, en este definí dos modelos, los caules son, socail y follow. Social sirve para gestionar la parte de los mensajes entre usuarios y los comentarios y Follow sirve para el seguimiento entre personas. Para implementar estas lógica hice la funciones que están en el service y en el repositories y pará las llamadas a estas funciones desde las vistas hice el routes. Por último creé unos datos iniciales que están en seeders, para los test.
+
 ### Vision Global del Proceso de Desarrollo
 
 **BORRAR CUANDO SE TERMINE LA SECCION** *Debe dar una visión general del proceso que ha seguido enlazándolo con las herramientas que ha utilizado. Ponga un ejemplo de un cambio que se proponga al sistema y cómo abordaria todo el ciclo hasta tener ese cambio en producción. Los detalles de cómo hacer el cambio vendrán en el apartado correspondiente.*
