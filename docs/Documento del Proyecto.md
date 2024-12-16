@@ -9,11 +9,11 @@
 | Miembro                        | Implicación |
 |--------------------------------|-------------|
 | [Fernández Mota, Francisco](#)  | 9      |
-| [García Abadía, Enrique](#)     | [1-10]      |
-| [Giraldo Santiago, Luis](#)    | [1-10]      |
-| [Sheng Chen](#)                | [1-10]      |
-| [Solís Agudo, Felipe](#)        | [1-10]      |
-| [Vargas Muñiz, David](#)        | [1-10]      |
+| [García Abadía, Enrique](#)     | 8      |
+| [Giraldo Santiago, Luis](#)    | 10      |
+| [Sheng Chen](#)                | 9      |
+| [Solís Agudo, Felipe](#)        | 8      |
+| [Vargas Muñiz, David](#)        | 8      |
 
 ## Indicadores del proyecto
 
@@ -30,9 +30,6 @@
 ## Resumen Ejecutivo
 
 ### Descripcion del Sistema
-
-**BORRAR CUANDO SE TERMINE LA SECCION** 
-*Se explicará el sistema desarrollado desde un punto de vista funcional y arquitectónico. Se hará una descripción tanto funcional como técnica de sus componentes y su relación con el resto de subsistemas. Habrá una sección que enumere explícitamente cuáles son los cambios que se han desarrollado para el proyecto.*
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Se parte del proyecto base UVLHub, al cual se le han realizado difentes modificacion y adiciones, seleccionando diferentes WI de los propuestos para realizar. Se han seleccionado para el desarrollo 2 WI de dificultad *High* y 4 WI de dificultad *Medium*. Los WI seleccionados son los siguientes: Dashboard (*Medium*), Download in different formats (*Medium*), Rate datasets/models (*Medium*), Improved UI (*Medium*), Advanced Filtering (*High*) y Social Module (*High*). 
 
@@ -82,15 +79,12 @@
 
 ### Vision Global del Proceso de Desarrollo
 
-**BORRAR CUANDO SE TERMINE LA SECCION** *Debe dar una visión general del proceso que ha seguido enlazándolo con las herramientas que ha utilizado. Ponga un ejemplo de un cambio que se proponga al sistema y cómo abordaria todo el ciclo hasta tener ese cambio en producción. Los detalles de cómo hacer el cambio vendrán en el apartado correspondiente.*
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para el desarrollo del proyecto se ha empleado una serie de procesos de desarrolo y ejecucion especificos para garantizar el buen desarrollo de proyecto y minimizar la aparicion de conflictos. Cuando ya estaban seleccionados lo WI por cada uno de los integrantes se generaron diferentes *issues* en el repositorio de github para cada uno de los WI. En estas *issues* se definirian y describiran las diferentes tareas en las que se dividirian los WI, facilitando su desarrollo y la deteccion y resolucion de errores. A cada *issue* se le asignara una *priority* la cual nos dara una vision de cuanto de importante es completarla con exactitud. Una vez que se han establecidos las *issues*, se creo un *project* de github para si poder establecer diferentes estados los cuales poder asignarle a cada *issue* dependiendo en que estapa se encuentre (Por Hacer, En Progreso, En Revision, Hecho). 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Una vez comprendido los pasos previos al desarrollo de los WI, entramos de lleno en como es el proceso de desarrollo de uno de ellos, con todos los pasos que implican. Primero, crearemos una rama para el WI, en la que trabajaremos hasta que este terminado el WI. Cuando la rama este creada, asignaremos las *issues* correspondientes a esta rama. Una vez se haya completado el desarrollo de una *issue*, se realizara un *commit* sobre esa rama, siguiendo el formato establecido en el **Acta Fundacional**. Cuando el WI este completo y se hayan realizados los testeos necesarios, se procedera a realizar una *pull request* para introducir los cambios a la rama *main*. Esta *pull request* debe ser aceptada por otro de los integrantes del grupo, que sera el encargado de revisar si existe algun conflicto que impida que se pueda proseguir con la peticion. Cuando se valide la funcionalida y apruebe la *pull request* se debera cerrar la/s *issue/s* de ese WI. 
 
 ### Entorno de Desarrollo
 
-**BORRAR CUANDO SE TERMINE LA SECCION** *Debe explicar cuál es el entorno de desarrollo que ha usado, cuáles son las versiones usadas y qué pasos hay que seguir para instalar tanto su sistema como los subsistemas relacionados para hacer funcionar el sistema al completo. Si se han usado distintos entornos de desarrollo por parte de distintos miembros del grupo, también debe referenciarlo aquí.*
 El desarrollo del proyecto se realizó utilizando un conjunto robusto de herramientas y configuraciones que permitieron implementar y probar las funcionalidades requeridas. A continuación, se describen los aspectos clave del entorno utilizado:
 
 El desarrollo del proyecto se realizó utilizando un entorno bien estructurado para garantizar la eficacia y la reproducibilidad del sistema. A continuación, se describen los aspectos clave:
@@ -196,7 +190,6 @@ El proyecto hizo uso de una variedad de librerías y herramientas, incluyendo:
   - `flake8` para análisis estático del código.
 ### Ejercicio de Propuesta de Cambio
 
-**BORRAR CUANDO SE TERMINE LA SECCION** *Se presentará un ejercicio con una propuesta concreta de cambio en la que a partir de un cambio que se requiera, se expliquen paso por paso (incluyendo comandos y uso de herramientas) lo que hay que hacer para realizar dicho cambio. Debe ser un ejercicio ilustrativo de todo el proceso de evolución y gestión de la configuración del proyecto.*
 La propuesta de cambio consiste en permitir a los usuairos iniciar sesión con distintas credenciales de forma múltiple y simultánea, y cambiar de sesión cuando considere oportuno.
 
 Para ello hay que seguir los siguientes pasos:
@@ -211,6 +204,10 @@ Para ello hay que seguir los siguientes pasos:
 ### Conclusiones
 
 **BORRAR CUANDO SE TERMINE LA SECCIÓN** *Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega*
+
+- **Apartado de mejoras**
+   - Fakenodo en UVLHub y no como WI común y obligatorio.
+   - Base de Datos más fácil de manipular y más accesible (.sqlite3)
 
 ## Enlaces de interés:
 
