@@ -8,24 +8,26 @@
 
 | Miembro                        | Implicación |
 |--------------------------------|-------------|
-| [Fernández Mota, Francisco](#)  | 9      |
-| [García Abadía, Enrique](#)     | 8      |
-| [Giraldo Santiago, Luis](#)    | 10      |
-| [Sheng Chen](#)                | 9      |
-| [Solís Agudo, Felipe](#)        | 8      |
-| [Vargas Muñiz, David](#)        | 8      |
+| [Chen, Sheng](#)               | 9           |
+| [Fernández Mota, Francisco](#) | 9           |
+| [García Abadía, Enrique](#)    | 8           |
+| [Giraldo Santiago, Luis](#)    | 10          |
+| [Solís Agudo, Felipe](#)       | 8           |
+| [Vargas Muñiz, David](#)       | 8           |
+
 
 ## Indicadores del proyecto
 
-| Miembro del equipo               | Horas | Commits | LoC | Test | Issues | Work Item         |
-|----------------------------------|-------|---------|-----|------|--------|-------------------|
-| [Fernández Mota, Francisco](#)   | 79    | 33      | 970  | **5 tests unitarios**, **3 tests de interfaz**   | **11**     | **Download in different formats**. Este WI implementa botones adicionales para que los usuarios puedan descargar tanto datasets como modelos en diferentes formatos además de los ya propuestos (UVL, Glencoe, AFM, JSON, SPLOT y CNF). |
-| [García Abadía, Enrique](#)     | HH    | XX      | YY  | **4 tests** (1 de ellos pair-wise)   | II     | **WI: Advanced Filtering**. En este WI se trabaja sobre la pestaña 'explore' de la aplicacion, donde se han eliminado los filtros que habia y se han añadido filtros para las siguientes propiedades de los dataset: publicaction type, author, files number, total size, title y tag. |
-| [Giraldo Santiago, Luis](#)      | 87    | 113      | 2.189.306++ y 2.176.010-- | **8 tests unitarios**, **3 tests selenium**, **6 tests locust**   | 11     | **WI: SocialModule**. Este WI implementa un sistema de seguimiento entre usuarios, un chat para hablar entre usuarios que se han seguido mutuamente y por último una sección de comentarios en los dataset. |
-| [Sheng Chen](#)                  | HH    | XX      | YY  | **6 tests Selenium**, **6 tests unitarios**   | II     | **WI: Dashboard**. Este WI implementa un tablero que muestra un resumen de las estadísticas clave del sistema: datasets sincronizados/no sincronizados, descargas, vistas y conteo dinámico de equipos. |
-| [Solís Agudo, Felipe](#)         | 64    | 30      | 1.000++ y 633--  | **2 tests Selenium**, **4 tests unitarios**  | **10** (2 de issues globales y 8 de mi WI)     | WI: Improve UI. En este WI se trabaja sobre la vista "view_dataset", la cual se modifica y se mejora respecto a la vista base, reorganizándola y adaptándola, siguiendo una estructura similar a GitHub, al resto de WI de los compañeros del grupo. Además, se crea una nueva vista llamada "file_content" a la que se puede acceder desde "view_dataset" creada para trasladar funcionalidades y poder gestionar los archivos file.uvl de una manera mucho más sencilla.|
-| [Vargas Muñiz, David](#)         | 75    | 23      | 2930 ++ y 884 --  | **2 tests Selenium, 4 tests unitarios, 1 test Locust**   | **12** (2 de issues globales y 10 de mi WI)     | **WI: Rate Datasets/Models.** Este WI implementa un sistema que permite calificar los distintos datasets, a través de distintas métricas tales como Quality, Size y Usability, mostrando la media total para este, a través del campo Overall Rating. Además, permite visualizar tanto las medias de cada métrica, como la media total para cada dataset. |
-| **TOTAL**                        | tHH   | tXX     | tYY | tZZ  | tII    | Descripción breve |
+| Miembro del equipo               | Horas | Commits | LoC            | Test                                     | Issues | Work Item                                  |
+|----------------------------------|-------|---------|----------------|------------------------------------------|--------|--------------------------------------------|
+| [Chen, Sheng](#)                 | 75    | 29      | 4129++ y 1812--             | **6 tests Selenium**, **6 tests unitarios** | 8     | **WI: Dashboard**. Este WI implementa un tablero que muestra un resumen de las estadísticas clave del sistema: datasets sincronizados/no sincronizados, descargas, vistas y conteo dinámico de equipos. |
+| [Fernández Mota, Francisco](#)   | 79    | 33      | 970            | **5 tests unitarios**, **3 tests de interfaz** | 11     | **Download in different formats**. Este WI implementa botones adicionales para que los usuarios puedan descargar tanto datasets como modelos en diferentes formatos además de los ya propuestos (UVL, Glencoe, AFM, JSON, SPLOT y CNF). |
+| [García Abadía, Enrique](#)     | 66    | 19      | 1386++ y 543--             | **4 tests** (1 de ellos pair-wise)       | 6     | **WI: Advanced Filtering**. En este WI se trabaja sobre la pestaña 'explore' de la aplicación, donde se han eliminado los filtros que había y se han añadido filtros para las siguientes propiedades de los datasets: publicaction type, author, files number, total size, title y tag. |
+| [Giraldo Santiago, Luis](#)      | 87    | 113     | 2.189.306++ y 2.176.010-- | **8 tests unitarios**, **3 tests selenium**, **6 tests locust** | 11     | **WI: SocialModule**. Este WI implementa un sistema de seguimiento entre usuarios, un chat para hablar entre usuarios que se han seguido mutuamente y por último una sección de comentarios en los datasets. |
+| [Solís Agudo, Felipe](#)         | 70    | 30      | 1.002++ y 634-- | **2 tests Selenium**, **4 tests unitarios**  | **10** (2 de issues globales y 8 de mi WI)      | **WI: Improve UI**. En este WI se trabaja sobre la vista "view_dataset", reorganizándola y adaptándola al resto de WI de los compañeros del grupo. Además, se crea una nueva vista llamada "file_content" para gestionar archivos file.uvl de manera más sencilla. |
+| [Vargas Muñiz, David](#)         | 75    | 23      | 2930++ y 884-- | **2 tests Selenium**, **4 tests unitarios**, **1 test Locust** | **12** (2 de issues globales y 10 de mi WI)     | **WI: Rate Datasets/Models.** Este WI implementa un sistema que permite calificar los distintos datasets, a través de métricas como Quality, Size y Usability, mostrando la media total para este a través del campo Overall Rating. |
+| **TOTAL**                        | 452   | 274     | 2.199.823++ y 2.182.593--            | 3 tests en total (14 Selenium, 30 unitarios, 7 adicionales como Locust e interfaz)                                     | 49    | El equipo completó 49 issues divididas entre los 6 Work Items (WI), con un esfuerzo total de 452 horas. Se realizaron 247 commits que sumaron un impacto significativo en el código, con más de 2.199.823 líneas añadidas y 2.182.593 eliminadas. Las pruebas realizadas incluyen 14 tests Selenium, 30 unitarios y 7 adicionales (interfaz y carga). Estas tareas abarcaron la creación de nuevos módulos, optimización de funcionalidades existentes, y mejoras tanto en la experiencia del usuario como en la arquitectura del sistema.                         |
+
 
 ## Resumen Ejecutivo
 
@@ -203,14 +205,38 @@ Para ello hay que seguir los siguientes pasos:
 
 ### Conclusiones
 
-**BORRAR CUANDO SE TERMINE LA SECCIÓN** *Se enunciarán algunas conclusiones y se presentará un apartado sobre las mejoras que se proponen para el futuro (curso siguiente) y que no han sido desarrolladas en el sistema que se entrega*
+El desarrollo de **Berenjena-Hub** ha permitido fortalecer habilidades tanto técnicas como de gestión de equipo, enfrentándonos a retos relacionados con la implementación de funcionalidades complejas y la integración de cambios en un entorno colaborativo. Durante el proceso, logramos los siguientes hitos clave:
 
-- **Apartado de mejoras**
-   - Fakenodo en UVLHub y no como WI común y obligatorio.
-   - Base de Datos más fácil de manipular y más accesible (.sqlite3)
+1. **Funcionalidades implementadas:** 
+   - Se completaron los **6 Work Items (WI)** seleccionados, abarcando tareas tanto de dificultad media como alta. Cada WI fue probado exhaustivamente para garantizar su correcta funcionalidad e integración en el sistema base, UVLHub.
+   - Se incorporaron mejoras significativas como un tablero (Dashboard) interactivo, un sistema de calificación de datasets, y módulos sociales que fomentan la interacción entre usuarios.
+
+2. **Optimización del sistema base:** 
+   - UVLHub fue enriquecido con nuevas capacidades como descargas en múltiples formatos, filtros avanzados para la búsqueda de datasets, y una interfaz gráfica mejorada que hace el uso del sistema más intuitivo para los usuarios.
+   - La implementación de **Fakenodo** optimizó la interacción con APIs externas, reduciendo la carga sobre servicios como Zenodo.
+
+3. **Colaboración y gestión:** 
+   - El equipo aplicó una metodología ágil, apoyándose en herramientas como GitHub Projects para la organización de tareas y la resolución de conflictos. 
+   - El uso de ramas específicas para cada WI y un estricto control de calidad antes de realizar pull requests ayudó a mantener un desarrollo ordenado y sin interrupciones.
+
+4. **Aprendizajes técnicos:** 
+   - Se adquirió experiencia práctica en herramientas como Flask, SQLAlchemy, Selenium, y MariaDB, así como en la configuración de entornos de desarrollo con Docker.
+   - La implementación de pruebas unitarias y de integración fue crucial para garantizar la estabilidad del sistema, cumpliendo con los estándares definidos en el **Acta Fundacional**.
+
+### Mejoras propuestas para el futuro
+
+Aunque se logró un sistema robusto y funcional, quedan áreas de mejora que podrían ser abordadas en futuras iteraciones del proyecto:
+
+- **Fakenodo como parte nativa de UVLHub:** Integrar Fakenodo directamente en la arquitectura del sistema base en lugar de manejarlo como un WI adicional.
+- **Base de datos más accesible:** Explorar el uso de bases de datos más ligeras y portables, como SQLite, para facilitar la configuración en entornos de desarrollo y pruebas.
+- **Documentación ampliada:** Crear tutoriales o guías más detalladas para la instalación y uso del sistema, facilitando la incorporación de nuevos desarrolladores o colaboradores.
+
+### Reflexión final
+
+El proyecto **Berenjena-Hub** no solo cumplió con los objetivos iniciales, sino que también brindó una experiencia enriquecedora en cuanto a desarrollo de software, trabajo en equipo y resolución de problemas. Con los aprendizajes y las bases establecidas, el sistema está preparado para evolucionar en el futuro, integrando aún más funcionalidades y consolidándose como una solución robusta para la gestión de datasets en entornos colaborativos.
+
 
 ## Enlaces de interés:
 
 - Enlace al repositorio: [https://github.com/berenjena-hub/berenjena-hub.git](#).
 - Proyecto desplegado: [https://berenjena-hub.onrender.com/](#).
-- [Cualquier otro enlace de interés](#).
