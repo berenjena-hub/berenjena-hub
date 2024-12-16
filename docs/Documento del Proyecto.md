@@ -24,7 +24,7 @@
 | [Giraldo Santiago, Luis](#)      | 87    | 113      | 2.189.306++ y 2.176.010-- | **8 tests unitarios**, **3 tests selenium**, **6 tests locust**   | 11     | **WI: SocialModule**. Este WI implementa un sistema de seguimiento entre usuarios, un chat para hablar entre usuarios que se han seguido mutuamente y por último una sección de comentarios en los dataset. |
 | [Sheng Chen](#)                  | HH    | XX      | YY  | **6 tests Selenium**, **6 tests unitarios**   | II     | **WI: Dashboard**. Este WI implementa un tablero que muestra un resumen de las estadísticas clave del sistema: datasets sincronizados/no sincronizados, descargas, vistas y conteo dinámico de equipos. |
 | [Solís Agudo, Felipe](#)         | 64    | 30      | 1.000++ y 633--  | **2 tests Selenium**, **4 tests unitarios**  | **10** (2 de issues globales y 8 de mi WI)     | WI: Improve UI. En este WI se trabaja sobre la vista "view_dataset", la cual se modifica y se mejora respecto a la vista base, reorganizándola y adaptándola, siguiendo una estructura similar a GitHub, al resto de WI de los compañeros del grupo. Además, se crea una nueva vista llamada "file_content" a la que se puede acceder desde "view_dataset" creada para trasladar funcionalidades y poder gestionar los archivos file.uvl de una manera mucho más sencilla.|
-| [Vargas Muñiz, David](#)         | HH    | XX      | YY  | ZZ   | II     | Descripción breve |
+| [Vargas Muñiz, David](#)         | 70    | 21      | 2868 ++ y 880 --  | **2 tests Selenium, 4 tests unitarios**   | **12** (2 de issues globales y 10 de mi WI)     | **WI: Rate Datasets/Models.** Este WI implementa un sistema que permite calificar los distintos datasets, a través de distintas métricas tales como Quality, Size y Usability, mostrando la media total para este, a través del campo Overall Rating. Además, permite visualizar tanto las medias de cada métrica, como la media total para cada dataset. |
 | **TOTAL**                        | tHH   | tXX     | tYY | tZZ  | tII    | Descripción breve |
 
 ## Resumen Ejecutivo
@@ -63,6 +63,17 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Para la implementación de este WI se ha modificado la vista 'view_dataset', en la que se encuentra toda la información sobre un dataset concreto presente en la base de datos. Esta vista fue modificada y reestructurada siguiendo un esquema similar al que sigue GitHub. Además, se añadió una nueva vista,  'file_content', a la cual se puede acceder haciendo click sobre los archivos file.uvl que presenta el dataset correspondiente. Se trasladaron funcionalidades que se encontraban en la vista inicial para trabajar de manera más fácil e intuitiva sobre los archivos individuales, cosa que antes era un proceso algo menos intuitivo. Por otro lado, también se cambió la manera de ver el contenido de los archivos file.uvl que estaba en el proyecto base, siendo esta nueva manera mucho más cómoda para el usuario, con la posibilidad de volver al dataset al que dicho archivo pertenece pulsando sobre su nombre en la ruta de la parte superior de la vista, como se haría en GitHub. En esta otra vista, también existe la posibilidad de navegar sobre los archivos file.uvl de una manera más intuitiva que antes.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Se priorizó la reorganización de la vista base en función de las funcionalidades más relevantes que esta poseía. Además, también se modificó adaptándola al resto de los WI de los compañeros, los cuales muchos de ellos afectaban a la vista  'view_dataset'. En la nueva vista   'file_content' también hay funcionalidades de WI de otros compañeros.
+
+#### <u>Rate Datasets/Models </u>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;La implementación del WI Rate Datasets/Models permite a los usuarios calificar los distintos datasets, a través de distintas métricas tales como Quality, Size y Usability, mostrando la media total para este, a través del campo Overall Rating. Además, ofrece una visualización, tanto para las medias de cada métrica, como para la media total para cada dataset.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;El desarrollo implicó:
+ - La creación de la tabla ratings en la base de datos.
+ - La creación del modelo Rating en models.py.
+ - La adición de la class DatasetRatingRepository en repositories.py, donde se incluyen las operaciones base de la funcionalidad.
+ - La adición de la class RatingService en services.py, donde se incluyen las operaciones base de la funcionalidad, referenciando el repositorio.
+ - La creación de las rutas necesarias en routes.py para el manejo de la calificación de los datasets y su visualización.
+ - La adición del html necesario en view_dataset.html para que sea posible el uso del backend, así como el código correspondiente al proceso en js.
 
 ### Vision Global del Proceso de Desarrollo
 
