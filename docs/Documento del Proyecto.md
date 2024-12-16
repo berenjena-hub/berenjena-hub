@@ -8,7 +8,7 @@
 
 | Miembro                        | Implicación |
 |--------------------------------|-------------|
-| [Fernández Mota, Francisco](#)  | [1-10]      |
+| [Fernández Mota, Francisco](#)  | 9      |
 | [García Abadía, Enrique](#)     | [1-10]      |
 | [Giraldo Santiago, Luis](#)    | [1-10]      |
 | [Sheng Chen](#)                | [1-10]      |
@@ -19,7 +19,7 @@
 
 | Miembro del equipo               | Horas | Commits | LoC | Test | Issues | Work Item         |
 |----------------------------------|-------|---------|-----|------|--------|-------------------|
-| [Fernández Mota, Francisco](#)   | HH    | XX      | YY  | **5 tests unitarios**, **3 tests de interfaz**   | II     | **Download in different formats**. Este WI implementa botones adicionales para que los usuarios puedan descargar tanto datasets como modelos en diferentes formatos además de los ya propuestos (UVL, Glencoe, AFM, JSON, SPLOT y CNF). |
+| [Fernández Mota, Francisco](#)   | 79    | 33      | 970  | **5 tests unitarios**, **3 tests de interfaz**   | **11**     | **Download in different formats**. Este WI implementa botones adicionales para que los usuarios puedan descargar tanto datasets como modelos en diferentes formatos además de los ya propuestos (UVL, Glencoe, AFM, JSON, SPLOT y CNF). |
 | [García Abadía, Enrique](#)     | HH    | XX      | YY  | **4 tests** (1 de ellos pair-wise)   | II     | **WI: Advanced Filtering**. En este WI se trabaja sobre la pestaña 'explore' de la aplicacion, donde se han eliminado los filtros que habia y se han añadido filtros para las siguientes propiedades de los dataset: publicaction type, author, files number, total size, title y tag. |
 | [Giraldo Santiago, Luis](#)      | 87    | 113      | 2.189.306++ y 2.176.010-- | **8 tests unitarios**, **3 tests selenium**, **6 tests locust**   | 11     | **WI: SocialModule**. Este WI implementa un sistema de seguimiento entre usuarios, un chat para hablar entre usuarios que se han seguido mutuamente y por último una sección de comentarios en los dataset. |
 | [Sheng Chen](#)                  | HH    | XX      | YY  | **6 tests Selenium**, **6 tests unitarios**   | II     | **WI: Dashboard**. Este WI implementa un tablero que muestra un resumen de las estadísticas clave del sistema: datasets sincronizados/no sincronizados, descargas, vistas y conteo dinámico de equipos. |
