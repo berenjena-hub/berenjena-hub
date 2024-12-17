@@ -192,7 +192,7 @@ El proyecto hizo uso de una variedad de librerías y herramientas, incluyendo:
   - `flake8` para análisis estático del código.
 ### Ejercicio de Propuesta de Cambio
 
-La propuesta de cambio consiste en permitir a los usuairos iniciar sesión con distintas credenciales de forma múltiple y simultánea, y cambiar de sesión cuando considere oportuno.
+La propuesta de cambio consiste en modificar el apartado de *Related publication* de la página *home* de la aplicación y añadir a los nombres de los integrantes del grupo.
 
 Para ello hay que seguir los siguientes pasos:
 - Crear en el repositorio de github una *Issue* siguiendo la pólitica de *Issues* definida en el **Acta Fundacional**, para que la propuesta sea valorada por el equipo de desarrollo.
@@ -200,7 +200,7 @@ Para ello hay que seguir los siguientes pasos:
 - Se divide la *Issue* en otras tareas más pequeñas si el cambio es complejo.
 - Para la implementación del cambio, accederemos al directorio del proyecto `cd berenjena-hub/` y se activará el entorno virtual `source venv/bin/activate`. Se creará una rama si es necesario con el comando `git checkout -b <nombre_rama>`, en caso de no tener que crear una rama, basta con hacer `git checkout <nombre_rama>`. Una vez situado en la rama, se implementarán los cambios con tests respectivos que comprueben el correcto funcionamiendo de la nueva funcionalidad.
 - Una vez implementados los cambios, hacer *commit*, comandos `git add .` y `git commit -m "feat(Funcionalidad): Mensaje de commit #nº Issue"`. Es importante destacar que los *commits* según lo acordado en el **Acta Fundacional** deben ser atómicos, por lo que quizás sea necesario hacer más de un *commit*. Una vez hecho con `git push origin <nombre_rama>` los cambios se subirán a la rama remota en el repositorio de git hub.
-- Tras subir los cambios al repositorio, hay que realizar una *Pull Request (PR)* para que los cambios se integren en la rama *main*, para ello es necesario seguir la política definida en el **Acta FUndacional** para esta *Pull Request (PR)*. La petición será revisada por otro integrante del grupo y será aceptada si los cambios funcionan de la forma esperada, de lo contrario se notificará y se cancelará la *Pull Request (PR)*.
+- Tras subir los cambios al repositorio, hay que realizar una *Pull Request (PR)* para que los cambios se integren en la rama *main*, para ello es necesario seguir la política definida en el **Acta Fundacional** para esta *Pull Request (PR)*. La petición será revisada por otro integrante del grupo y será aceptada si los cambios funcionan de la forma esperada, de lo contrario se notificará y se cancelará la *Pull Request (PR)*.
 - Cuando los cambios se han integrado en la rama *main*, borrar la rama si no se necesita para más implementaciones y cerrar la *Issue* de la propuesta de cambio.
 
 ### Conclusiones
